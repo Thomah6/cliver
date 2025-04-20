@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../js/browser@4.js"></script>
+    <style type="text/tailwindcss">
+        @theme{
+    --color-clifford: #da373d;
+    }
+    </style>
+</head>
+
+<body>
+    <!-- ========== HEADER ========== -->
+    <header class="sticky top-0 inset-x-0 flex flex-wrap md:justify-start md:flex-nowrap z-50 w-full text-sm">
+        <nav
+            class="mt-4 relative max-w-2xl w-full bg-white border border-gray-200 rounded-3xl mx-2 py-2.5 md:flex md:items-center md:justify-between md:py-0 md:px-4 md:mx-auto  ">
+            <div class="px-4 md:px-0 flex justify-between items-center">
+                <div class="flex items-center">
+                    <!-- Logo -->
+                    <a style="font-family:  monospace;"
+                        class="font-bold flex-none rounded-md text-xl inline-block monospace focus:outline-hidden focus:opacity-80"
+                        href="../index.html" aria-label="Preline">
+                        Buglix
+                    </a>
+                    <!-- End Logo -->
+
+                    <div class="ms-1 sm:ms-2">
+
+                    </div>
+                </div>
+
+                <div class="md:hidden">
+                    <!-- Toggle Button -->
+                    <button type="button"
+                        class="hs-collapse-toggle flex justify-center items-center size-7 border border-gray-200 text-gray-500 rounded-full hover:bg-gray-200 focus:outline-hidden focus:bg-gray-200    "
+                        id="hs-navbar-header-floating-collapse" aria-expanded="false"
+                        aria-controls="hs-navbar-header-floating" aria-label="Toggle navigation"
+                        data-hs-collapse="#hs-navbar-header-floating">
+                        <svg class="hs-collapse-open:hidden shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg"
+                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" x2="21" y1="6" y2="6" />
+                            <line x1="3" x2="21" y1="12" y2="12" />
+                            <line x1="3" x2="21" y1="18" y2="18" />
+                        </svg>
+                        <svg class="hs-collapse-open:block hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
+                            width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6 6 18" />
+                            <path d="m6 6 12 12" />
+                        </svg>
+                    </button>
+                    <!-- End Toggle Button -->
+                </div>
+            </div>
+
+            <div id="hs-navbar-header-floating"
+                class="hidden hs-collapse overflow-hidden transition-all duration-300 basis-full grow md:block"
+                aria-labelledby="hs-navbar-header-floating-collapse">
+                <div
+                    class="flex flex-col md:flex-row md:items-center md:justify-end gap-2 md:gap-3 mt-3 md:mt-0 py-2 md:py-0 md:ps-7">
+                    <a class="py-0.5 md:py-3 px-4 md:px-1 border-s-2 md:border-s-0 md:border-b-2 border-transparent text-gray-500 hover:text-gray-800 focus:outline-hidden  "
+                        href="../index.html"  >Home</a>
+                    <a class="py-0.5 md:py-3 px-4 md:px-1 border-s-2 md:border-s-0 md:border-b-2 border-transparent text-gray-500 hover:text-gray-800 focus:outline-hidden  "
+                        href="#">How it work</a>
+                    <a class="py-0.5 md:py-3 px-4 md:px-1 border-s-2 md:border-s-0 md:border-b-2 border-gray-800 font-medium text-gray-800  focus:outline-hidden  "
+                        href="/" aria-current="page">Pricing</a>
+                    <a class="rounded-full w-auto bg-linear-to-tl from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 focus:outline-hidden focus:from-violet-600 focus:to-blue-600 border border-transparent text-white text-sm font-medium  py-1 px-2 border-s-2 md:border-s-0 md:border-b-2 border-transparent text-gray-500 focus:outline-hidden  "
+                        href="#">Get Started</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!-- ========== END HEADER ========== -->
+    <!-- Hero -->
+    <div
+        class="relative overflow-hidden before:absolute before:top-0 before:start-1/2 before:bg-[url('../assets/images/squared-bg-element.svg')] before:bg-no-repeat before:bg-top before:size-full before:-z-1 before:transform before:-translate-x-1/2">
+        <div class="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8  pb-10">
+
+
+            <div class=" text-center mx-auto">
+                <div class="mt-7   rounded-3xl shadow-2xs  ">
+                    <div class="sm:p-7">
+
+
+                        <div class="">
+                            <!-- Features -->
+                            <div class="overflow-hidden bg-white/30 backdrop-blur-sm border border-white/20 ">
+                                <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+                                    <!-- Title -->
+                                    <div class="mx-auto max-w-2xl mb-8 lg:mb-14 text-center">
+                                        <h2 class="text-3xl lg:text-4xl text-gray-800 font-bold username">
+                                            Solo, agency or team? We’ve got you covered.
+                                        </h2>
+                                    </div>
+                                    <!-- End Title -->
+
+                                    <div class="relative xl:w-10/12 xl:mx-auto">
+                                        <!-- Grid -->
+                                        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+                                            <!-- Gratuit -->
+                                            <div class="rounded-2xl border border-gray-200 bg-white shadow-md p-8 flex flex-col items-center">
+                                                <h3 class="text-xl font-bold text-gray-800 mb-2">Gratuit</h3>
+                                                <div class="text-4xl font-extrabold text-gray-800 mb-2">0€</div>
+                                                <div class="text-gray-500 mb-4">Pour découvrir la plateforme</div>
+                                                <ul class="mb-6 text-gray-600 text-sm space-y-2">
+                                                    <li>1 projet</li>
+                                                    <li>1000 tokens/mois</li>
+                                                    <li>Support basique</li>
+                                                </ul>
+                                                <button class="w-full py-3 px-4 rounded-lg bg-gray-200 text-gray-500 font-semibold cursor-not-allowed" disabled>
+                                                    Inclus à l'inscription
+                                                </button>
+                                            </div>
+                                            <!-- Pro -->
+                                            <div class="rounded-2xl border-2 border-blue-600 bg-white shadow-xl p-8 flex flex-col items-center relative">
+                                                <span class="absolute top-0 right-0 mt-4 mr-4 px-3 py-1 rounded-full bg-blue-600 text-white text-xs font-bold">Populaire</span>
+                                                <h3 class="text-xl font-bold text-gray-800 mb-2">Pro</h3>
+                                                <div class="text-4xl font-extrabold text-blue-600 mb-2">9€<span class="text-base font-normal text-gray-600">/mois</span></div>
+                                                <div class="text-gray-500 mb-4">Pour les développeurs réguliers</div>
+                                                <ul class="mb-6 text-gray-600 text-sm space-y-2">
+                                                    <li>10 projets</li>
+                                                    <li>100 000 tokens/mois</li>
+                                                    <li>Support prioritaire</li>
+                                                    <li>Accès aux nouveautés</li>
+                                                </ul>
+                                                <a href="../paiement/?plan=pro" class="w-full py-3 px-4 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition text-center">
+                                                    S'abonner
+                                                </a>
+                                            </div>
+                                            <!-- Team -->
+                                            <div class="rounded-2xl border border-gray-200 bg-white shadow-md p-8 flex flex-col items-center">
+                                                <h3 class="text-xl font-bold text-gray-800 mb-2">Team</h3>
+                                                <div class="text-4xl font-extrabold text-gray-800 mb-2">29€<span class="text-base font-normal text-gray-600">/mois</span></div>
+                                                <div class="text-gray-500 mb-4">Pour les équipes et startups</div>
+                                                <ul class="mb-6 text-gray-600 text-sm space-y-2">
+                                                    <li>Projets illimités</li>
+                                                    <li>1 000 000 tokens/mois</li>
+                                                    <li>Support premium</li>
+                                                    <li>Gestion d'équipe</li>
+                                                </ul>
+                                                <a href="../paiement/?plan=team" class="w-full py-3 px-4 rounded-lg bg-violet-600 text-white font-semibold hover:bg-violet-700 transition text-center">
+                                                    S'abonner
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <!-- End Grid -->
+
+                                        <!-- SVG Element -->
+                                        <div class="hidden md:block absolute top-0 end-0 translate-y-16 translate-x-16">
+                                            <svg class="w-16 h-auto text-orange-500" width="121" height="135"
+                                                viewBox="0 0 121 135" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M5 16.4754C11.7688 27.4499 21.2452 57.3224 5 89.0164"
+                                                    stroke="currentColor" stroke-width="10" stroke-linecap="round" />
+                                                <path d="M33.6761 112.104C44.6984 98.1239 74.2618 57.6776 83.4821 5"
+                                                    stroke="currentColor" stroke-width="10" stroke-linecap="round" />
+                                                <path d="M50.5525 130C68.2064 127.495 110.731 117.541 116 78.0874"
+                                                    stroke="currentColor" stroke-width="10" stroke-linecap="round" />
+                                            </svg>
+                                        </div>
+                                        <!-- End SVG Element -->
+
+                                        <!-- SVG Element -->
+                                        <div
+                                            class="hidden md:block absolute bottom-0 start-0 translate-y-16 -translate-x-16">
+                                            <svg class="w-56 h-auto text-cyan-500" width="347" height="188"
+                                                viewBox="0 0 347 188" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M4 82.4591C54.7956 92.8751 30.9771 162.782 68.2065 181.385C112.642 203.59 127.943 78.57 122.161 25.5053C120.504 2.2376 93.4028 -8.11128 89.7468 25.5053C85.8633 61.2125 130.186 199.678 180.982 146.248L214.898 107.02C224.322 95.4118 242.9 79.2851 258.6 107.02C274.299 134.754 299.315 125.589 309.861 117.539L343 93.4426"
+                                                    stroke="currentColor" stroke-width="7" stroke-linecap="round" />
+                                            </svg>
+                                        </div>
+                                        <!-- End SVG Element -->
+                                    </div>
+
+                                    <div class="mt-7 text-center">
+                                        <p class="text-xs text-gray-400">
+                                            Prices in USD. Taxes may apply.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Features -->
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+
+            <!-- End Buttons -->
+        </div>
+    </div>
+    <!-- End Hero -->
+
+    <script src="../js/preline.min.js"></script>
+
+</body>
+
+</html>

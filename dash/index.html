@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-white dark:bg-gray-900">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clifixer Dashboard</title>
+  <!-- Preline CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@preline/tooltip@1.0.0/dist/tooltip.min.css" />
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="module">
+    import { auth } from "../src/firebase.js";
+    import { logout, getUserInfo } from "../src/auth.js";
+
+    let inited = false;
+
+    // Vérification de session
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        console.log("Utilisateur connecté :", user.uid);
+        if (!inited) {
+          inited = true;
+          await init(user);
+        }
+      } else {
+        console.log("Utilisateur non connecté. Redirection...");
+        window.location.href = "../auth/index.html"; // Redirige si non connecté
+      }
+    });
+
+    // Fonction d'initialisation
+    async function init(user) {
+      try {
+        // Récupération des informations utilisateur
+        const userInfo = await getUserInfo(user.uid);
+        if (!userInfo || typeof userInfo !== "object") {
+          throw new Error("Données utilisateur invalides.");
+        }
+
+        // Mise à jour des informations utilisateur
+        document.getElementById("user-uid").value = userInfo.uid || "Non disponible";
+        document.getElementById("user-email").textContent = userInfo.email || "Non disponible";
+        document.getElementById("user-username").textContent = userInfo.username || "Non disponible";
+        document.getElementById("token-count").textContent = userInfo.token || "Non disponible";
+
+        // Mise à jour des initiales
+        const initials = userInfo.username
+          ? userInfo.username
+              .split(" ")
+              .map((name) => name[0])
+              .join("")
+              .toUpperCase()
+          : "JD"; // Valeur par défaut
+        document.getElementById("user-initials").textContent = initials;
+
+        // Gestion de la déconnexion
+        const logoutBtn = document.getElementById("logout-btn");
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", async () => {
+            try {
+              await logout();
+              console.log("Déconnexion réussie !");
+              window.location.href = "../auth/index.html"; // Redirige après déconnexion
+            } catch (error) {
+              console.error("Erreur lors de la déconnexion :", error.message);
+              alert("Erreur lors de la déconnexion. Veuillez réessayer.");
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Erreur lors de l'initialisation :", error.message);
+        alert("Impossible de charger les données utilisateur.");
+      }
+    }
+  </script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: "#f0f9ff",
+              100: "#e0f2fe",
+              500: "#3b82f6",
+              600: "#2563eb",
+            },
+            purple: {
+              500: "#a855f7",
+              600: "#9333ea",
+            },
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    .bg-gradient-blue-purple {
+      background: linear-gradient(135deg, #3b82f6 0%, #9333ea 100%);
+    }
+
+    .text-gradient-blue-purple {
+      background: linear-gradient(135deg, #3b82f6 0%, #9333ea 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .sidebar-item.active {
+      background-color: rgba(255, 255, 255, 0.12);
+    }
+
+    body {
+      font-size: 16px;
+      background: #f8fafc;
+    }
+
+    .p-6 {
+      padding: 1.75rem;
+    }
+
+    .sidebar-item:hover {
+      background-color: rgba(255, 255, 255, 0.18);
+      transition: background 0.2s;
+    }
+
+    button:hover,
+    .sidebar-item:active {
+      opacity: 0.95;
+    }
+
+    /* Header shadow and border */
+    .main-header {
+      box-shadow: 0 2px 8px 0 rgba(60, 72, 88, .07);
+      border-bottom: 1px solid #e5e7eb;
+      background: #fff;
+    }
+
+    .main-header.dark {
+      background: #23272f;
+      border-bottom: 1px solid #374151;
+    }
+
+    /* Avatar ring */
+    .avatar-ring {
+      box-shadow: 0 0 0 3px #fff, 0 0 0 6px #9333ea33;
+    }
+
+    .sidebar-item,
+    .sidebar-item.active {
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .sidebar-item {
+      color: #374151;
+    }
+
+    .sidebar-item.active,
+    .sidebar-item:hover {
+      background-color: rgba(59, 130, 246, 0.08);
+      color: #3b82f6;
+    }
+
+    .dark .sidebar-item {
+      color: #fff;
+    }
+
+    .dark .sidebar-item.active,
+    .dark .sidebar-item:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+      color: #a855f7;
+    }
+
+    .sidebar {
+      background: #fff;
+      color: #374151;
+    }
+
+    .dark .sidebar {
+      background: #23272f;
+      color: #fff;
+    }
+
+    /* Chart container */
+    .chart-container {
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 2px 8px 0 rgba(60, 72, 88, .07);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .dark .chart-container {
+      background: #23272f;
+      box-shadow: 0 2px 8px 0 rgba(60, 72, 88, .12);
+    }
+  </style>
+</head>
+
+<body class=" dark:bg-gray-900">
+  <!-- ========== HEADER ========== -->
+  <header
+    class="main-header sticky top-0 z-50 flex items-center justify-between px-4 py-2 sm:px-6 lg:px-8 transition-colors dark:bg-gray-800 dark:border-gray-700">
+    <div class="flex items-center gap-4 w-full">
+      <!-- Logo -->
+      <a class="flex-none text-2xl font-extrabold tracking-tight dark:text-white" href="#" aria-label="Clifixer">
+        <span class="text-gradient-blue-purple">Clifixer</span>
+      </a>
+      <!-- Sidebar Toggle Button -->
+      <button id="sidebar-toggle"
+        class="lg:hidden flex items-center justify-center h-10 w-10 rounded-full border border-gray-200 text-gray-800 hover:bg-gray-100 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 transition">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+    <div class="flex items-center gap-2 sm:gap-4">
+      <!-- Theme Toggle -->
+      <button type="button"
+        class="hs-dark-mode-active:hidden hs-dark-mode flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-sm font-medium text-gray-800 hover:bg-gray-100 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 transition"
+        data-hs-theme-click-value="dark">
+        <i class="fas fa-moon"></i>
+      </button>
+      <button type="button"
+        class="hs-dark-mode-active:flex hidden hs-dark-mode h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-sm font-medium text-gray-800 hover:bg-gray-100 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 transition"
+        data-hs-theme-click-value="light">
+        <i class="fas fa-sun"></i>
+      </button>
+
+      <!-- User Dropdown -->
+      <div class="hs-dropdown relative inline-flex" id="user-dropdown">
+        <button id="hs-dropdown-with-header" type="button"
+          class="hs-dropdown-toggle inline-flex items-center gap-x-2 rounded-full border border-gray-200 bg-white px-2 py-1 text-sm font-medium text-gray-800 shadow-sm hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700 transition"
+          aria-expanded="false" aria-haspopup="true">
+          <span class="flex items-center">
+            <span
+              class="avatar-ring relative flex h-10 w-10 items-center justify-center rounded-full bg-gradient-blue-purple text-white font-bold text-lg">
+              <span id="user-initials" class="font-semibold">JD</span>
+            </span>
+          </span>
+        </button>
+        <div
+          id="user-dropdown-menu"
+          class="absolute right-0 top-full mt-2 z-50 hs-dropdown-menu duration hidden min-w-60 rounded-lg bg-white p-2 opacity-0 shadow-xl transition-[opacity,margin] dark:border dark:border-gray-700 dark:bg-gray-800"
+          aria-labelledby="hs-dropdown-with-header">
+          <div class="-m-2 rounded-t-lg bg-gray-100 px-4 py-3 dark:bg-gray-700">
+            <p class="text-sm text-gray-800 dark:text-gray-200">
+              Connecté en tant que
+            </p>
+            <p id="user-email" class="text-sm font-medium text-gray-800 dark:text-gray-300">
+              john@example.com
+            </p>
+          </div>
+          <div class="mt-2 py-2 first:pt-0 last:pb-0">
+            <a class="flex items-center gap-x-3.5 rounded-lg px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+              href="#">
+              <i class="fas fa-user-circle"></i>
+              Mon profil
+            </a>
+            <button id="logout-btn"
+              class="flex w-full items-center gap-x-3.5 rounded-lg px-3 py-2 text-sm text-red-600 hover:bg-gray-100 dark:text-red-500 dark:hover:bg-gray-700">
+              <i class="fas fa-sign-out-alt"></i>
+              Déconnexion
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <div class="relative flex">
+    <!-- Sidebar -->
+    <div id="sidebar"
+      class="sidebar fixed inset-y-0 left-0 z-40 w-64 -translate-x-full transform border-r bg-white border-gray-200  dark:border-gray-700 dark:bg-gray-800 text-white transition-transform duration-300 lg:relative lg:translate-x-0 lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)]">
+      <div class="flex h-full flex-col px-4 py-6">
+        <!-- Sidebar Header -->
+        <div class="mb-8 px-4">
+          <h2 class="text-gray-800 dark:text-white text-xl font-semibold">Tableau de bord</h2>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <nav class="flex-1 space-y-1">
+          <a href="#" class="text-gray-800 dark:text-white sidebar-item active flex items-center gap-x-3 rounded-lg px-4 py-3 hover:bg-white/10 bg-white">
+            <i class="fas fa-tachometer-alt"></i>
+            Aperçu
+          </a>
+          
+          <a href="#" class="text-gray-800 dark:text-white sidebar-item flex items-center gap-x-3 rounded-lg px-4 py-3 hover:bg-white/10">
+            <i class="fas fa-chart-line"></i>
+            Utilisation
+          </a>
+          <a href="#" class="text-gray-800 dark:text-white sidebar-item flex items-center gap-x-3 rounded-lg px-4 py-3 hover:bg-white/10">
+            <i class="fas fa-credit-card"></i>
+            Abonnement
+          </a>
+          <a href="#" class="text-gray-800 dark:text-white sidebar-item flex items-center gap-x-3 rounded-lg px-4 py-3 hover:bg-white/10">
+            <i class="fas fa-cog"></i>
+            Paramètres
+          </a>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="mt-auto px-4 pt-4 ">
+          <div class="rounded-lg bg-gradient-blue-purple p-4">
+            <p class="text-sm">
+              Passer à Premium pour débloquer plus de fonctionnalités
+            </p>
+            <button
+              class="mt-2 w-full rounded-lg bg-white px-3 py-2 text-sm font-medium text-purple-600 hover:bg-gray-100">
+              Mettre à niveau
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-4 dark:bg-gray-900">
+      <!-- Welcome Banner -->
+      <div class="mb-6 rounded-xl bg-gradient-blue-purple p-6 text-white shadow-lg">
+        <h1 class="mb-2 text-3xl font-bold">
+          Bienvenue, <span id="user-username">John</span>!
+        </h1>
+        <p class="opacity-90">
+          Gérez votre compte Clifixer et surveillez votre utilisation de l'API
+        </p>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="mb-6 grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        
+
+        <!-- Tokens Card -->
+        <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-md hover:shadow-lg dark:border-gray-700 dark:bg-gray-800">
+          <div class="flex items-center gap-x-4">
+            <div class="rounded-lg bg-purple-50 p-3 dark:bg-gray-700">
+              <i class="fas fa-coins text-purple-600 dark:text-purple-400"></i>
+            </div>
+            <div>
+              <h3 class="text-sm text-gray-500 dark:text-gray-400">
+                Tokens restants
+              </h3>
+              <p class="mt-1 text-lg font-semibold text-gray-800 dark:text-gray-200">
+                <span id="token-count">0000</span>
+                <span class="ml-1 text-sm font-normal text-gray-500 dark:text-gray-400">/ 1,000</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Plan Card -->
+        <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-md hover:shadow-lg dark:border-gray-700 dark:bg-gray-800">
+          <div class="flex items-center gap-x-4">
+            <div class="rounded-lg bg-green-50 p-3 dark:bg-gray-700">
+              <i class="fas fa-crown text-green-600 dark:text-green-400"></i>
+            </div>
+            <div>
+              <h3 class="text-sm text-gray-500 dark:text-gray-400">
+                Votre plan
+              </h3>
+              <p class="mt-1 text-lg font-semibold text-gray-800 dark:text-gray-200">
+                <span id="user-plan">Gratuit</span>
+                <span
+                  class="ml-2 rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-800 dark:bg-blue-900 dark:text-blue-200">Basique</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- API Token Section -->
+      <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-md hover:shadow-lg dark:border-gray-700 dark:bg-gray-800">
+        <div class="mb-4 flex items-center justify-between">
+          <h3 class="text-sm text-gray-500 dark:text-gray-400">
+            Votre UID
+          </h3>
+          
+        </div>
+        <div class="relative">
+          <input id="user-uid" type="text"
+            class="block w-full rounded-lg border border-gray-200 bg-gray-50 p-1 pr-12 font-mono text-sm text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+            value="Chargement..." readonly />
+          <div class="absolute right-2 top-1/2 -translate-y-1/2">
+            <button class="rounded-lg p-1 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700"
+              onclick="copyToken()">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+        </div>
+        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+          Utilisez ce UID pour authentifier vos messages
+        </p>
+      </div>
+      </div>
+
+      <!-- Token Usage Chart 
+      <div class="chart-container ">
+        <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Suivi de la consommation de tokens</h2>
+        <canvas id="tokenChart" height="80"></canvas>
+      </div>-->
+
+      
+
+      <!-- Recent Activity -->
+      <div class="rounded-xl border border-gray-200 bg-white shadow-md hover:shadow-lg dark:border-gray-700 dark:bg-gray-800">
+        <div class="border-b border-gray-200 px-6 py-4 dark:border-gray-700">
+          <h2 class="text-lg font-semibold text-gray-800 dark:text-white">
+            Activité récente
+          </h2>
+        </div>
+        <div class="divide-y divide-gray-200 dark:divide-gray-700">
+          <!-- Activity Item -->
+          <div class="p-6">
+            <div class="flex items-center gap-x-4">
+              <div
+                class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-600 dark:bg-gray-700 dark:text-blue-400">
+                <i class="fas fa-check"></i>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-sm font-medium text-gray-800 dark:text-white">
+                  Requête API réussie
+                </h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                  Endpoint: /v1/completions
+                </p>
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Il y a 2 minutes • 5 tokens utilisés
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- Activity Item -->
+          <div class="p-6">
+            <div class="flex items-center gap-x-4">
+              <div
+                class="flex h-10 w-10 items-center justify-center rounded-full bg-green-50 text-green-600 dark:bg-gray-700 dark:text-green-400">
+                <i class="fas fa-key"></i>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-sm font-medium text-gray-800 dark:text-white">
+                  Token régénéré
+                </h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                  Ancien token révoqué
+                </p>
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Il y a 1 heure
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="border-t border-gray-200 px-6 py-3 dark:border-gray-700">
+          <a href="#"
+            class="flex items-center justify-center gap-x-2 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+            Voir toute l'activité
+            <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+      
+    </main>
+  </div>
+
+  <!-- Preline JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@preline/dropdown@1.0.0/dist/dropdown.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@preline/collapse@1.0.0/dist/collapse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@preline/tooltip@1.0.0/dist/tooltip.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth-compat.js"></script>
+  <script>
+    // Theme toggle
+    document.querySelectorAll(".hs-dark-mode").forEach((button) => {
+      button.addEventListener("click", () => {
+        const isDark = document.documentElement.classList.contains("dark");
+        document.documentElement.classList.toggle("dark", !isDark);
+        localStorage.setItem("hs_theme", isDark ? "light" : "dark");
+      });
+    });
+
+    // Check for saved theme preference
+    if (
+      localStorage.getItem("hs_theme") === "dark" ||
+      (!localStorage.getItem("hs_theme") &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+    // Copy token function
+    function copyToken() {
+      const tokenInput = document.getElementById("user-uid");
+      tokenInput.select();
+      document.execCommand("copy");
+
+      // Show tooltip or notification
+      alert("Uid copié dans le presse-papier!");
+    }
+
+    // Sidebar toggle functionality
+    const sidebarToggle = document.getElementById("sidebar-toggle");
+    const sidebar = document.getElementById("sidebar");
+
+    sidebarToggle.addEventListener("click", () => {
+      const isHidden = sidebar.classList.contains("-translate-x-full");
+      sidebar.classList.toggle("-translate-x-full", !isHidden);
+      document.body.classList.toggle("overflow-hidden", !isHidden); // Prevent scrolling when sidebar is open
+    });
+
+    // Close sidebar on outside click (for small screens)
+    document.addEventListener("click", (event) => {
+      if (
+        !sidebar.contains(event.target) &&
+        !sidebarToggle.contains(event.target) &&
+        window.innerWidth < 1024
+      ) {
+        sidebar.classList.add("-translate-x-full");
+        document.body.classList.remove("overflow-hidden");
+      }
+    });
+
+    // Gestion de la session utilisateur
+    document.addEventListener("DOMContentLoaded", () => {
+      
+      document.getElementById("user-initials").textContent = "JD";
+
+      // Auth check (Firebase)
+      const firebaseConfig = {
+        apiKey: "AIzaSyA_1hoEtwJkF_lJC1Jnp4dgQhTdHBrmTJ4",
+        authDomain: "clifixer.firebaseapp.com",
+        projectId: "clifixer",
+        storageBucket: "clifixer.firebasestorage.app",
+        messagingSenderId: "318234897260",
+        appId: "1:318234897260:web:18b58b8df79059bd486149",
+        measurementId: "G-WECQ09G5K5"
+      };
+      if (!window.firebase?.apps?.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+
+      
+    });
+
+    // Fix dropdown user menu (overlay style)
+    const userDropdown = document.getElementById('user-dropdown');
+    const userDropdownMenu = document.getElementById('user-dropdown-menu');
+    const userDropdownBtn = document.getElementById('hs-dropdown-with-header');
+
+    userDropdownBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      const isOpen = userDropdownMenu.classList.contains('open');
+      document.querySelectorAll('.hs-dropdown-menu.open').forEach(el => {
+        el.classList.remove('open', 'opacity-100');
+        el.classList.add('hidden', 'opacity-0');
+      });
+      if (!isOpen) {
+        userDropdownMenu.classList.remove('hidden', 'opacity-0');
+        userDropdownMenu.classList.add('open', 'opacity-100');
+        // Position overlay absolutely below the button
+        userDropdownMenu.style.position = 'absolute';
+        userDropdownMenu.style.right = '0';
+        userDropdownMenu.style.top = 'calc(100% + 0.5rem)';
+        userDropdownMenu.style.zIndex = '50';
+      } else {
+        userDropdownMenu.classList.remove('open', 'opacity-100');
+        userDropdownMenu.classList.add('hidden', 'opacity-0');
+      }
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!userDropdown.contains(e.target)) {
+        userDropdownMenu.classList.remove('open', 'opacity-100');
+        userDropdownMenu.classList.add('hidden', 'opacity-0');
+      }
+    });
+  </script>
+
+</body>
+
+</html>

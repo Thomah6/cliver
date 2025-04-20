@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <script type="module">
+    import { auth } from "./src/firebase.js";
+    import { logout, getUserInfo } from "./src/auth.js";
+
+    let inited = false;
+
+    // Vérification de session
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        console.log("Utilisateur connecté :", user.uid);
+        if (!inited) {
+          inited = true;
+          await init(user);
+        }
+      } else {
+        console.log("Utilisateur non connecté. Redirection...");
+        window.location.href = "auth/index.html"; // Redirige si non connecté
+      }
+    });
+
+    // Fonction d'initialisation
+    async function init(user) {
+      try {
+        // Récupération des informations utilisateur
+        const userInfo = await getUserInfo(user.uid);
+        if (!userInfo || typeof userInfo !== "object") {
+          throw new Error("Données utilisateur invalides.");
+        }
+        document.getElementById("user-uid").textContent = userInfo.uid || "Non disponible";
+        document.getElementById("user-email").textContent = userInfo.email || "Non disponible";
+        document.getElementById("user-username").textContent = userInfo.username || "Non disponible";
+        document.getElementById("user-token").textContent = userInfo.token || "Non disponible";
+
+        // Gestion de la déconnexion
+        const logoutBtn = document.getElementById("logout-btn");
+        if (logoutBtn) {
+          logoutBtn.addEventListener("click", async () => {
+            try {
+              await logout();
+              console.log("Déconnexion réussie !");
+              window.location.href = "auth/index.html"; // Redirige après déconnexion
+            } catch (error) {
+              console.error("Erreur lors de la déconnexion :", error.message);
+              alert("Erreur lors de la déconnexion. Veuillez réessayer.");
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Erreur lors de l'initialisation :", error.message);
+        alert("Impossible de charger les données utilisateur.");
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>Bienvenue sur le tableau de bord</h1>
+  <div>
+    <p><strong>UID:</strong> <span id="user-uid">Chargement...</span></p>
+    <p><strong>Email:</strong> <span id="user-email">Chargement...</span></p>
+    <p><strong>Username:</strong> <span id="user-username">Chargement...</span></p>
+    <p><strong>Tokens:</strong> <span id="user-token">Chargement...</span></p>
+  </div>
+  <button id="logout-btn">Déconnexion</button>
+</body>
+</html>

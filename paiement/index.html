@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Paiement - Clifixer</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@preline/tooltip@1.0.0/dist/tooltip.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+  <div class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
+    <h1 class="text-2xl font-bold mb-2 text-center">Paiement sécurisé</h1>
+    <p class="mb-6 text-center text-gray-500" id="plan-desc">Chargement...</p>
+    <form id="payment-form" class="space-y-4">
+      <div id="card-element" class="p-3 border border-gray-200 rounded-lg"></div>
+      <button type="submit" class="w-full py-3 px-4 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">
+        Payer
+      </button>
+    </form>
+    <div id="payment-message" class="mt-4 text-center text-red-600"></div>
+  </div>
+  <script>
+    // Affichage du plan choisi
+    const params = new URLSearchParams(window.location.search);
+    const plan = params.get('plan');
+    let planText = '';
+    if (plan === 'pro') planText = "Abonnement Pro - 9€/mois";
+    else if (plan === 'team') planText = "Abonnement Team - 29€/mois";
+    else planText = "Aucun plan sélectionné";
+    document.getElementById('plan-desc').textContent = planText;
+
+    // Stripe integration (remplacez par vos propres clés côté serveur pour production)
+    const stripe = Stripe('pk_test_1234567890'); // Remplacez par votre clé publique Stripe
+
+    // Pour une vraie intégration, il faut créer une PaymentIntent côté serveur
+    document.getElementById('payment-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      document.getElementById('payment-message').textContent = "Paiement non disponible en démo.";
+      // Ici, vous devriez appeler votre backend pour créer une session Stripe Checkout ou PaymentIntent
+      // Puis rediriger l'utilisateur vers Stripe Checkout ou utiliser stripe.confirmCardPayment(...)
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "cliver",
+  "version": "1.0.0",
+  "main": "api/index.js",
+  "type": "module", 
+  "scripts": {
+    "start": "node api/index.js", 
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.17.1", 
+    "firebase": "^9.1.2", 
+    "node-fetch": "^2.6.1", 
+    "body-parser": "^2.2.0", 
+    "path": "^0.12.7", 
+    "fs": "^0.0.1" 
+  },
+  "engines": {
+    "node": ">=14.0.0" 
+  },
+  "license": "ISC"
+}

@@ -1,0 +1,2085 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Auth</title>
+    <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth.js"></script>
+    <script src="js/browser@4.js"></script>
+    <style type="text/tailwindcss">
+        @theme{
+    --colorfford: #da373d;
+    }
+
+    @keyframes scroll-slow {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-scroll-slow {
+  animation: scroll-slow 30s linear infinite;
+}
+#logoSlider:hover {
+  animation-play-state: paused;
+}
+    </style>
+</head>
+
+<body >
+<!-- ========== HEADER ========== -->
+<header class="sticky top-0 inset-x-0 flex flex-wrap md:justify-start md:flex-nowrap z-50 w-full text-sm">
+    <nav class="mt-4 relative max-w-5xl w-full bg-white border border-gray-200 rounded-3xl mx-2 py-2.5 md:flex md:items-center md:justify-between md:py-0 md:px-4 md:mx-auto  ">
+      <div class="px-4 md:px-0 flex justify-between items-center">
+        <div class="flex items-center">
+          <!-- Logo -->
+          <a style="font-family:  monospace;" class="font-bold flex-none rounded-md text-xl inline-block monospace focus:outline-hidden focus:opacity-80" href="../templates/personal/index.html" aria-label="Preline">
+            <img src="assets/images/logo.png" class="h-6" alt="clifixer logo">
+          </a>
+          <!-- End Logo -->
+  
+          <div class="ms-1 sm:ms-2">
+  
+          </div>
+        </div>
+  
+        <div class="md:hidden">
+          <!-- Toggle Button -->
+          <button type="button" class="hs-collapse-toggle flex justify-center items-center size-7 border border-gray-200 text-gray-500 rounded-full hover:bg-gray-200 focus:outline-hidden focus:bg-gray-200    " id="hs-navbar-header-floating-collapse" aria-expanded="false" aria-controls="hs-navbar-header-floating" aria-label="Toggle navigation" data-hs-collapse="#hs-navbar-header-floating">
+            <svg class="hs-collapse-open:hidden shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y1="6" y2="6"/><line x1="3" x2="21" y1="12" y2="12"/><line x1="3" x2="21" y1="18" y2="18"/></svg>
+            <svg class="hs-collapse-open:block hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+          <!-- End Toggle Button -->
+        </div>
+      </div>
+  
+      <div id="hs-navbar-header-floating" class="hidden hs-collapse overflow-hidden transition-all duration-300 basis-full grow md:block" aria-labelledby="hs-navbar-header-floating-collapse">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-end gap-2 md:gap-3 mt-3 md:mt-0 py-2 md:py-0 md:ps-7">
+          <a class="py-0.5 md:py-3 px-4 md:px-1 border-s-2 md:border-s-0 md:border-b-2 border-gray-800 font-medium text-gray-800 focus:outline-hidden  " href="#" aria-current="page">Home</a>
+          <a class="py-0.5 md:py-3 px-4 md:px-1 border-s-2 md:border-s-0 md:border-b-2 border-transparent text-gray-500 hover:text-gray-800 focus:outline-hidden  " href="#">How it work</a>
+          <a class="py-0.5 md:py-3 px-4 md:px-1 border-s-2 md:border-s-0 md:border-b-2 border-transparent text-gray-500 hover:text-gray-800 focus:outline-hidden  " href="pricing/">Pricing</a>
+          <a class="rounded-full w-auto bg-linear-to-tl from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 focus:outline-hidden focus:from-violet-600 focus:to-blue-600 border border-transparent text-white text-sm font-medium  py-1 px-2 border-s-2 md:border-s-0 md:border-b-2 border-transparent text-gray-500 focus:outline-hidden  " href="auth/">Get Started</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <!-- ========== END HEADER ========== -->
+    <!-- Hero -->
+    <div
+        class="relative overflow-hidden before:absolute before:top-0 before:start-1/2 before:bg-[url('assets/images/squared-bg-element.svg')] before:bg-no-repeat before:bg-top before:size-full before:-z-1 before:transform before:-translate-x-1/2">
+        <div class="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-10">
+            <!-- Announcement Banner -->
+            <div class="flex justify-center">
+                <a class="inline-flex items-center gap-x-2 bg-white border border-gray-200 text-xs text-gray-600 p-2 px-3 rounded-full transition hover:border-gray-300 focus:outline-hidden focus:border-gray-300     "
+                    href="#">
+                    🚧 Beta Live - Evolving Daily
+                    
+                </a>
+            </div>
+            <!-- End Announcement Banner -->
+
+            <!-- Title -->
+            <div class="mt-5 max-w-xl text-center mx-auto">
+                <h1 style="font-family: monospace;" class="block font-bold text-gray-700 text-4xl md:text-5xl lg:text-6xl " >
+                   AI smashes bugs.<br class="hidden md:block"> You ship🚀
+                </h1>
+            </div>
+            <!-- End Title -->
+
+            <div class="mt-5 max-w-3xl text-center mx-auto">
+                <p class="text-lg text-gray-600 ">Chat wit AI that knows your stack and productions logs. Debug and fix faster.</p>
+            </div>
+
+            <!-- Buttons -->
+            <div class="mt-8 gap-3 sm:flex sm:justify-center">
+                <div class="w-full sm:w-auto flex justify-center">
+                    <input type="text" id="hero-input" name="hero-input" class="w-4/5 sm:w-full md:min-w-90 bg-white/30 backdrop-blur-sm border border-wite/20 outline-hidden py-2.5 sm:py-3 px-4 block  border-gray-200 rounded-full sm:text-sm focus:border-purple-300 focus:ring-purple-300 disabled:opacity-50 disabled:pointer-events-none     " placeholder="Enter your domain url">
+                  </div>
+                      <a class="w-full flex sm:w-auto sm:inline-flex justify-center items-center sm:gap-x-3 "
+                      href="#">
+                      <button class="w-4/5 sm:w-full mt-2 sm:mt-0 text-center bg-linear-to-tl from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 focus:outline-hidden focus:from-violet-600 focus:to-blue-600 border border-transparent text-white text-sm font-medium rounded-full py-3 px-4">
+                        Debug Now - Free Trial
+                      </button>
+                     
+                  
+                  </a>
+            </div>
+            <div class="bg-[#1e1e2f] shadow-xl text-white rounded-xl shadow-2xl max-w-5xl mx-auto mt-8 overflow-hidden border border-[#2c2c3e] font-mono text-sm">
+              <!-- Header façon macOS -->
+              <div class="bg-[#2d2d3f] px-4 py-2 flex items-center gap-2">
+                <span class="h-3 w-3 rounded-full bg-red-500"></span>
+                <span class="h-3 w-3 rounded-full bg-yellow-400"></span>
+                <span class="h-3 w-3 rounded-full bg-green-500"></span>
+              </div>
+            
+              <!-- Terminal zone -->
+              <div id="terminal" class="p-4 h-[200px] overflow-y-auto whitespace-pre-wrap space-y-1 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#2d2d3f]">
+              </div>
+            
+              <!-- Prompt affiché -->
+              <div class="bg-[#1e1e2f] px-4 py-2">
+                <span class="text-white">&gt;</span><span id="inputText" class="text-white"></span>
+              </div>
+            </div>
+
+            
+            <!-- End Buttons -->
+        </div>
+    </div>
+    
+    <!-- End Hero -->
+    <!-- TOOLS -->
+
+    <div class="relative overflow-hidden max-w-5xl mx-auto before:absolute before:top-0 before:start-1/2 before:bg-[url('assets/images/squared-bg-element.svg')] before:bg-no-repeat before:bg-top before:size-full before:-z-1 before:transform before:-translate-x-1/2">
+
+      <!-- Carousel wrapper -->
+<div class="relative overflow-hidden w-full bg-transparent pb-6 ">
+  <!-- Shadow left -->
+  <div class="absolute left-0 top-0 h-full w-32 md:w-48 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
+
+  <!-- Shadow right -->
+  <div class="absolute right-0 top-0 h-full w-32 md:w-48 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
+
+  <!-- Scrolling logos -->
+  <div id="logoSlider" class="flex   gap-10 animate-scroll-slow whitespace-nowrap ">
+    <img src="assets/images/techno/angular.svg" alt="logo1" class="h-8 md:h-12  transition" />
+    <img src="assets/images/techno/vitejs.svg" alt="logo2" class="h-8 md:h-12  transition" />
+    <img src="assets/images/techno/svelte.svg" alt="logo3" class="h-8 md:h-12  transition" />
+    <img src="assets/images/techno/remix.svg" alt="logo4" class="h-8 md:h-12  transition" />
+    <img src="assets/images/techno/react.svg" alt="logo5" class="h-8 md:h-12  transition" />
+    <img src="assets/images/techno/nodejs.svg" alt="logo1" class="h-8 md:h-12  transition" />
+    <img src="assets/images/techno/nextjs.svg" alt="logo2" class="h-8 md:h-12  transition" />
+    <img src="assets/images/techno/nestjs.svg" alt="logo3" class="h-8 md:h-12  transition" />
+
+    <img src="assets/images/techno/bun.svg" alt="logo3" class="h-8 md:h-12  transition" />
+    <img src="assets/images/techno/docker.svg" alt="logo3" class="h-8 md:h-12  transition" />
+    <img src="assets/images/techno/electron.svg" alt="logo3" class="h-8 md:h-12  transition" />
+    <img src="assets/images/techno/express.svg" alt="logo3" class="h-8 md:h-12  transition" />
+  </div>
+</div>
+    <!-- End TOOLS -->
+
+    </div>
+
+
+<!-- Comparison Grid -->
+<section class="py-16">
+  <div class="max-w-7xl mx-auto px-4">
+    <h2 class="text-3xl lg:text-4xl text-gray-800 font-bold  font-bold text-center mb-12">
+      Why <span class="text-blue-600">Clifixer</span> Over Copilot?
+    </h2>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      <!-- Card 1: Independence -->
+      <div class="rounded-xl p-8 border border-gray-200 transition-all">
+        <div class="w-12 h-12 bg-linear-to-tl from-blue-600/20 to-violet-600/20 rounded-lg flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>        </div>
+        <h3 class="text-xl font-semibold text-black mb-2">Terminal-Native</h3>
+        <p class="text-gray-700">
+          Copilot chains you to your IDE. Clifixer <span class="text-blue-700 font-medium">operates anywhere</span>—Node, Docker, even production servers.
+        </p>
+      </div>
+
+      <!-- Card 2: Context -->
+      <div class="border-gray-200 rounded-xl p-8 border transition-all">
+        <div class="w-12 h-12 bg-linear-to-tl from-blue-600/20 to-violet-600/20 rounded-lg flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+          </svg>        </div>
+        <h3 class="text-xl font-semibold text-black mb-2">Stack-Aware</h3>
+        <p class="text-gray-700">
+          Unlike Copilot’s guesses, Clifixer <span class="text-blue-700 font-medium">reads your stack + logs</span> to suggest fixes that actually work.
+        </p>
+      </div>
+
+      <!-- Card 3: Luxury Angle -->
+      <div class="rounded-xl p-8 border border-gray-200 transition-all">
+        <div class="w-12 h-12 bg-linear-to-tl from-blue-600/20 to-violet-600/20 rounded-lg flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+          </svg>        </div>
+        <h3 class="text-xl font-semibold text-black mb-2">Discreet & Powerful</h3>
+        <p class="text-gray-700">
+          No intrusive suggestions. Just <span class="text-blue-700 font-medium">surgical fixes</span> when you need them—like a Swiss watch for debugging.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  
+
+
+
+<!-- How It Works - Light Version -->
+<div class="max-w-[85rem]  px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto bg-gradient-to-b from-white to-blue-50">
+  <!-- Title -->
+  <div class="text-center mb-12">
+    <h2 class="text-3xl lg:text-4xl text-gray-800 font-bold ">
+      How <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">Clifixer</span> Works
+    </h2>
+    <p class="mt-3 text-gray-600 max-w-2xl mx-auto">
+      Get started in 3 simple steps. No IDE lock-in, just pure debugging power.
+    </p>
+  </div>
+
+  <!-- Tab Nav -->
+  <nav class="max-w-3xl mx-auto grid sm:grid-cols-3 gap-4" aria-label="Tabs" role="tablist">
+    <!-- Tab 1: Install -->
+    <button type="button" 
+            class="hs-tab-active:bg-white hs-tab-active:shadow-lg hs-tab-active:border-transparent flex flex-col text-start p-4 md:p-5 rounded-xl border border-gray-200 bg-white/50 backdrop-blur-sm hover:border-blue-200 transition-all duration-300 hover:-translate-y-1"
+            id="tab-item-1" 
+            data-hs-tab="#tab-1" 
+            aria-controls="tab-1" 
+            role="tab">
+      <span class="flex items-center">
+        <span class="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center me-4">
+          <span class="text-blue-600 font-medium">1</span>
+        </span>
+        <span class="grow">
+          <span class="block font-semibold text-gray-800">Install</span>
+        </span>
+      </span>
+    </button>
+
+    <!-- Tab 2: Configure -->
+    <button type="button" 
+            class="hs-tab-active:bg-white hs-tab-active:shadow-lg hs-tab-active:border-transparent flex flex-col text-start p-4 md:p-5 rounded-xl border border-gray-200 bg-white/50 backdrop-blur-sm hover:border-blue-200 transition-all duration-300 hover:-translate-y-1"
+            id="tab-item-2" 
+            data-hs-tab="#tab-2" 
+            aria-controls="tab-2" 
+            role="tab">
+      <span class="flex items-center">
+        <span class="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center me-4">
+          <span class="text-blue-600 font-medium">2</span>
+        </span>
+        <span class="grow">
+          <span class="block font-semibold text-gray-800">Configure</span>
+        </span>
+      </span>
+    </button>
+
+    <!-- Tab 3: Chat -->
+    <button type="button" 
+            class="hs-tab-active:bg-white hs-tab-active:shadow-lg hs-tab-active:border-transparent flex flex-col text-start p-4 md:p-5 rounded-xl border border-gray-200 bg-white/50 backdrop-blur-sm hover:border-blue-200 transition-all duration-300 hover:-translate-y-1"
+            id="tab-item-3" 
+            data-hs-tab="#tab-3" 
+            aria-controls="tab-3" 
+            role="tab">
+      <span class="flex items-center">
+        <span class="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center me-4">
+          <span class="text-blue-600 font-medium">3</span>
+        </span>
+        <span class="grow">
+          <span class="block font-semibold text-gray-800">Debug</span>
+        </span>
+      </span>
+    </button>
+  </nav>
+
+  <!-- Tab Content -->
+  <div class="mt-8">
+    <!-- Tab 1 Content -->
+    <div id="tab-1" role="tabpanel" aria-labelledby="tab-item-1">
+      <div class="max-w-3xl mx-auto">
+        <p class="text-gray-600 mb-4">Install the Clifixer SDK globally to access it anywhere:</p>
+        <!-- Terminal Preview -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden transition-all duration-500 hs-tab-active:opacity-100">
+          <div class="flex items-center px-4 py-3 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
+            <div class="flex space-x-2">
+              <span class="w-3 h-3 rounded-full bg-red-400"></span>
+              <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+              <span class="w-3 h-3 rounded-full bg-green-400"></span>
+            </div>
+            <span class="text-xs text-gray-500 ml-2">bash</span>
+          </div>
+          <div class="p-4 font-mono text-sm bg-white">
+            <span class="text-blue-600">$</span> npm install -g clifixer<br>
+            <span class="text-gray-400"># Installs CLI globally</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2 Content -->
+    <div id="tab-2" class="hidden opacity-0 transition-opacity duration-500" role="tabpanel" aria-labelledby="tab-item-2">
+      <div class="max-w-3xl mx-auto">
+        <p class="text-gray-600 mb-4">Configure with your API token (get it from your dashboard):</p>
+        <!-- Terminal Preview -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div class="flex items-center px-4 py-3 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
+            <div class="flex space-x-2">
+              <span class="w-3 h-3 rounded-full bg-red-400"></span>
+              <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+              <span class="w-3 h-3 rounded-full bg-green-400"></span>
+            </div>
+            <span class="text-xs text-gray-500 ml-2">bash</span>
+          </div>
+          <div class="p-4 font-mono text-sm bg-white">
+            <span class="text-blue-600">$</span> npx clifixer init --token=YOUR_TOKEN<br>
+            <span class="text-gray-400"># Creates config file at ~/.clifixer</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3 Content -->
+    <div id="tab-3" class="hidden opacity-0 transition-opacity duration-500" role="tabpanel" aria-labelledby="tab-item-3">
+      <div class="max-w-3xl mx-auto">
+        <p class="text-gray-600 mb-4">Start debugging with optional context (logs, specific files):</p>
+        <!-- Terminal Preview -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div class="flex items-center px-4 py-3 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
+            <div class="flex space-x-2">
+              <span class="w-3 h-3 rounded-full bg-red-400"></span>
+              <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+              <span class="w-3 h-3 rounded-full bg-green-400"></span>
+            </div>
+            <span class="text-xs text-gray-500 ml-2">bash</span>
+          </div>
+          <div class="p-4 font-mono text-sm bg-white">
+            <span class="text-blue-600">$</span> npx clifixer chat --context=./lib<br>
+            <span class="text-gray-600">> [Clifixer] Analyzing 12 files in ./lib...</span><br>
+            <span class="text-gray-600">> Ask me about bugs (type 'exit' to quit):</span><br>
+            <span class="text-blue-600">></span> Why is my API returning 500 errors?<br>
+            <span class="text-purple-600">> [Clifixer] Found unhandled exception in routes.js:42...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Features -->
+<div class="overflow-hidden">
+  <!-- Announcement Banner -->
+  <div class="flex justify-center mt-8">
+    <a class="inline-flex items-center gap-x-2 bg-white border border-gray-200 text-xs text-gray-600 p-2 px-4 rounded-full transition hover:border-gray-300 focus:outline-hidden focus:border-gray-300     "
+        href="#">
+        Pricing
+        
+    </a>
+</div>
+<!-- End Announcement Banner -->
+  <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+    <!-- Title -->
+    <div class="mx-auto max-w-5xl mb-8 lg:mb-14 text-center">
+      <h2 class="text-3xl lg:text-4xl text-gray-800 font-bold ">
+        Straightforward Pricing
+      </h2>
+      <p class="mt-3 text-gray-600 max-w-2xl mx-auto">
+        Pay only for what you need. No surprises.
+      </p>
+    </div>
+    <!-- End Title -->
+
+    <div class="relative xl:w-10/12 xl:mx-auto">
+      <!-- Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+        <div>
+          <!-- Card -->
+          <div class="p-4 relative z-10 bg-white border border-gray-200 rounded-xl md:p-10 ">
+            <h3 class="text-xl font-bold text-gray-800 ">Starter</h3>
+            <div class="text-sm text-gray-500 ">For individuals getting started.</div>
+
+            <div class="mt-5">
+              <span class="text-6xl font-bold text-gray-800 ">$0</span>
+              <span class="text-lg font-bold text-gray-800 ">.00</span>
+              <span class="ms-3 text-gray-500 ">USD / monthly</span>
+            </div>
+
+            <div class="mt-5 grid sm:grid-cols-2 gap-y-2 py-4 first:pt-0 last:pb-0 sm:gap-x-6 sm:gap-y-0">
+              <!-- List -->
+              <ul class="space-y-2 text-sm sm:text-base">
+                <li class="flex gap-x-3">
+                  <span class="mt-0.5 size-5 flex justify-center items-center rounded-full bg-blue-50 text-blue-600 /30 ">
+                    <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                  <span class="text-gray-800 ">
+                    Up to 10 people
+                  </span>
+                </li>
+
+                <li class="flex gap-x-3">
+                  <span class="mt-0.5 size-5 flex justify-center items-center rounded-full bg-blue-50 text-blue-600 /30 ">
+                    <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                  <span class="text-gray-800 ">
+                    Collect data
+                  </span>
+                </li>
+
+                <li class="flex gap-x-3">
+                  <span class="mt-0.5 size-5 flex justify-center items-center rounded-full bg-blue-50 text-blue-600 /30 ">
+                    <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                  <span class="text-gray-800 ">
+                    Code extensibility
+                  </span>
+                </li>
+              </ul>
+              <!-- End List -->
+
+              <!-- List -->
+              <ul class="space-y-2 text-sm sm:text-base">
+                <li class="flex gap-x-3">
+                  <span class="size-5 flex justify-center items-center rounded-full bg-gray-50 text-gray-500 ">
+                    <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                  </span>
+                  <span class="text-gray-800 ">
+                    Custom reports
+                  </span>
+                </li>
+
+                <li class="flex gap-x-3">
+                  <span class="size-5 flex justify-center items-center rounded-full bg-gray-50 text-gray-500 ">
+                    <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                  </span>
+                  <span class="text-gray-800 ">
+                    Product support
+                  </span>
+                </li>
+
+                <li class="flex gap-x-3">
+                  <span class="size-5 flex justify-center items-center rounded-full bg-gray-50 text-gray-500 ">
+                    <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                  </span>
+                  <span class="text-gray-800 ">
+                    Activity reporting
+                  </span>
+                </li>
+              </ul>
+              <!-- End List -->
+            </div>
+
+            <div class="mt-5  gap-x-4 py-4 first:pt-0 last:pb-0">
+            <div class="flex justify-end">
+                <button type="button" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-50 ">Get started</button>
+              </div>
+            </div>
+          </div>
+          <!-- End Card -->
+        </div>
+
+        <div>
+          <!-- Card -->
+          <div class="shadow-xl shadow-gray-200 p-5 relative z-10 bg-white border border-gray-200 rounded-xl md:p-10 /20">
+            <h3 class="text-xl font-bold text-gray-800 ">Pro</h3>
+            <div class="text-sm text-gray-500 ">For professional developers.</div>
+            <span class="absolute top-0 end-0 rounded-se-xl rounded-es-xl text-xs font-medium bg-gray-800 text-white py-1.5 px-3 ">Most popular</span>
+
+            <div class="mt-5">
+              <span class="text-6xl font-bold text-gray-800 ">$9</span>
+              <span class="text-lg font-bold text-gray-800 ">.00</span>
+              <span class="ms-3 text-gray-500 ">USD / monthly or $90 per year</span>
+            </div>
+
+            <div class="mt-5 grid sm:grid-cols-2 gap-y-2 py-4 first:pt-0 last:pb-0 sm:gap-x-6 sm:gap-y-0">
+              <!-- List -->
+              <ul class="space-y-2 text-sm sm:text-base">
+                <li class="flex gap-x-3">
+                  <span class="mt-0.5 size-5 flex justify-center items-center rounded-full bg-blue-50 text-blue-600 /30 ">
+                    <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                  <span class="text-gray-800 ">
+                    Up to 10 people
+                  </span>
+                </li>
+
+                <li class="flex gap-x-3">
+                  <span class="mt-0.5 size-5 flex justify-center items-center rounded-full bg-blue-50 text-blue-600 /30 ">
+                    <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                  <span class="text-gray-800 ">
+                    Collect data
+                  </span>
+                </li>
+
+                <li class="flex gap-x-3">
+                  <span class="mt-0.5 size-5 flex justify-center items-center rounded-full bg-blue-50 text-blue-600 /30 ">
+                    <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                  <span class="text-gray-800 ">
+                    Code extensibility
+                  </span>
+                </li>
+              </ul>
+              <!-- End List -->
+
+              <!-- List -->
+              <ul class="space-y-2 text-sm sm:text-base">
+                <li class="flex gap-x-3">
+                  <span class="mt-0.5 size-5 flex justify-center items-center rounded-full bg-blue-50 text-blue-600 /30 ">
+                    <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                  <span class="text-gray-800 ">
+                    Custom reports
+                  </span>
+                </li>
+
+                <li class="flex gap-x-3">
+                  <span class="mt-0.5 size-5 flex justify-center items-center rounded-full bg-blue-50 text-blue-600 /30 ">
+                    <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                  <span class="text-gray-800 ">
+                    Product support
+                  </span>
+                </li>
+
+                <li class="flex gap-x-3">
+                  <span class="mt-0.5 size-5 flex justify-center items-center rounded-full bg-blue-50 text-blue-600 /30 ">
+                    <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </span>
+                  <span class="text-gray-800 ">
+                    Activity reporting
+                  </span>
+                </li>
+              </ul>
+              <!-- End List -->
+            </div>
+
+            <div class="mt-5 grid grid-cols-2 gap-x-4 py-4 first:pt-0 last:pb-0">
+              <div>
+                <p class="text-sm text-gray-500 ">Cancel anytime.</p>
+                <p class="text-sm text-gray-500 ">No card required.</p>
+              </div>
+
+              <div class="flex justify-end">
+                <button type="button" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">Start free trial</button>
+              </div>
+            </div>
+          </div>
+          <!-- End Card -->
+        </div>
+      </div>
+      <!-- End Grid -->
+
+      <!-- SVG Element -->
+      <div class="hidden md:block absolute top-0 end-0 translate-y-16 translate-x-16">
+        <svg class="w-16 h-auto text-orange-500" width="121" height="135" viewBox="0 0 121 135" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 16.4754C11.7688 27.4499 21.2452 57.3224 5 89.0164" stroke="currentColor" stroke-width="10" stroke-linecap="round"/>
+          <path d="M33.6761 112.104C44.6984 98.1239 74.2618 57.6776 83.4821 5" stroke="currentColor" stroke-width="10" stroke-linecap="round"/>
+          <path d="M50.5525 130C68.2064 127.495 110.731 117.541 116 78.0874" stroke="currentColor" stroke-width="10" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <!-- End SVG Element -->
+
+      <!-- SVG Element -->
+      <div class="hidden md:block absolute bottom-0 start-0 translate-y-16 -translate-x-16">
+        <svg class="w-56 h-auto text-cyan-500" width="347" height="188" viewBox="0 0 347 188" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 82.4591C54.7956 92.8751 30.9771 162.782 68.2065 181.385C112.642 203.59 127.943 78.57 122.161 25.5053C120.504 2.2376 93.4028 -8.11128 89.7468 25.5053C85.8633 61.2125 130.186 199.678 180.982 146.248L214.898 107.02C224.322 95.4118 242.9 79.2851 258.6 107.02C274.299 134.754 299.315 125.589 309.861 117.539L343 93.4426" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <!-- End SVG Element -->
+    </div>
+
+    <div class="mt-7 text-center">
+      <p class="text-xs text-gray-400">
+        Prices in USD. Taxes may apply.
+      </p>
+    </div>
+  </div>
+</div>
+<!-- End Features -->
+
+<!-- Comparison Table -->
+<div class="relative">
+  <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 md:py-14 lg:py-20 mx-auto">
+    <div class="max-w-5xl mx-auto text-center mb-10 lg:mb-14">
+      <h2 class="text-2xl font-bold md:text-3xl md:leading-tight ">Compare plans</h2>
+    </div>
+
+    <!-- Header -->
+    <div class="hidden lg:block sticky top-0 start-0 py-2 bg-white/60 backdrop-blur-md /60">
+      <!-- Grid -->
+      <div class="grid grid-cols-6 gap-6">
+        <div class="col-span-2">
+          <span class="font-semibold text-lg text-gray-800 ">
+            Features
+          </span>
+        </div>
+        <!-- End Col -->
+
+        <div class="col-span-1">
+          <span class="font-semibold text-lg text-gray-800 ">
+            Free
+          </span>
+          <p class="mt-2 text-sm text-gray-500 ">
+            Free forever
+          </p>
+        </div>
+        <!-- End Col -->
+
+        <div class="col-span-1">
+          <span class="font-semibold text-lg text-gray-800 ">
+            Startup
+          </span>
+          <p class="mt-2 text-sm text-gray-500 ">
+            $39 per month billed annually
+          </p>
+        </div>
+        <!-- End Col -->
+
+        <div class="col-span-1">
+          <span class="font-semibold text-lg text-gray-800 ">
+            Team
+          </span>
+          <p class="mt-2 text-sm text-gray-500 ">
+            $89 per month billed annually
+          </p>
+        </div>
+        <!-- End Col -->
+
+        <div class="col-span-1">
+          <span class="font-semibold text-lg text-gray-800 ">
+            Enterprise
+          </span>
+          <p class="mt-2 text-sm text-gray-500 ">
+            $149 per month billed annually
+          </p>
+        </div>
+        <!-- End Col -->
+      </div>
+      <!-- End Grid -->
+    </div>
+    <!-- End Header -->
+
+    <!-- Section -->
+    <div class="space-y-4 lg:space-y-0">
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 lg:py-3">
+          <span class="text-lg font-semibold text-gray-800 ">
+            General
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="hidden lg:block lg:col-span-1 py-1.5 lg:py-3 px-4 lg:px-0 lg:text-center">
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="hidden lg:block lg:col-span-1 py-1.5 lg:py-3 px-4 lg:px-0 lg:text-center">
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="hidden lg:block lg:col-span-1 py-1.5 lg:py-3 px-4 lg:px-0 lg:text-center">
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="hidden lg:block lg:col-span-1 py-1.5 lg:py-3 px-4 lg:px-0 lg:text-center">
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 pb-1.5 lg:py-3">
+          <span class="font-semibold lg:font-normal text-sm text-gray-800 ">
+            Number of seats
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Free
+            </span>
+            <span class="text-sm text-gray-800 ">
+              1
+            </span>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Startup
+            </span>
+            <span class="text-sm text-gray-800 ">
+              Up to 3
+            </span>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Team
+            </span>
+            <span class="text-sm text-gray-800 ">
+              Up to 10
+            </span>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Enterprise
+            </span>
+            <span class="text-sm text-gray-800 ">
+              Unlimited
+            </span>
+          </div>
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 pb-1.5 lg:py-3">
+          <span class="font-semibold lg:font-normal text-sm text-gray-800 ">
+            Storage
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Free
+            </span>
+            <span class="text-sm text-gray-800 ">
+              15 GB
+            </span>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Startup
+            </span>
+            <span class="text-sm text-gray-800 ">
+              1 TB
+            </span>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Team
+            </span>
+            <span class="text-sm text-gray-800 ">
+              15 TB
+            </span>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Enterprise
+            </span>
+            <span class="text-sm text-gray-800 ">
+              Unlimited
+            </span>
+          </div>
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 pb-1.5 lg:py-3">
+          <span class="font-semibold lg:font-normal text-sm text-gray-800 ">
+            Email sharing
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Free
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Startup
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Team
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Enterprise
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 pb-1.5 lg:py-3">
+          <span class="font-semibold lg:font-normal text-sm text-gray-800 ">
+            Any time, anywhere access
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Free
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Startup
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Team
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Enterprise
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+    </div>
+    <!-- End Section -->
+
+    <!-- Section -->
+    <div class="mt-6 space-y-4 lg:space-y-0">
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 lg:py-3">
+          <span class="text-lg font-semibold text-gray-800 ">
+            Financial data
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="hidden lg:block lg:col-span-1 py-1.5 lg:py-3 px-4 lg:px-0 lg:text-center">
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="hidden lg:block lg:col-span-1 py-1.5 lg:py-3 px-4 lg:px-0 lg:text-center">
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="hidden lg:block lg:col-span-1 py-1.5 lg:py-3 px-4 lg:px-0 lg:text-center">
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="hidden lg:block lg:col-span-1 py-1.5 lg:py-3 px-4 lg:px-0 lg:text-center">
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 pb-1.5 lg:py-3">
+          <span class="font-semibold lg:font-normal text-sm text-gray-800 ">
+            Open/High/Low/Close
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Free
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Startup
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Team
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Enterprise
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 pb-1.5 lg:py-3">
+          <span class="font-semibold lg:font-normal text-sm text-gray-800 ">
+            Price-volume difference indicator
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Free
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Startup
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Team
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Enterprise
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+    </div>
+    <!-- End Section -->
+
+    <!-- Section -->
+    <div class="mt-6 space-y-4 lg:space-y-0">
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 lg:py-3">
+          <span class="text-lg font-semibold text-gray-800 ">
+            On-chain data
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="hidden lg:block lg:col-span-1 py-1.5 lg:py-3 px-4 lg:px-0 lg:text-center">
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="hidden lg:block lg:col-span-1 py-1.5 lg:py-3 px-4 lg:px-0 lg:text-center">
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="hidden lg:block lg:col-span-1 py-1.5 lg:py-3 px-4 lg:px-0 lg:text-center">
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="hidden lg:block lg:col-span-1 py-1.5 lg:py-3 px-4 lg:px-0 lg:text-center">
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 pb-1.5 lg:py-3">
+          <span class="font-semibold lg:font-normal text-sm text-gray-800 ">
+            Network growth
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Free
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Startup
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Team
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Enterprise
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 pb-1.5 lg:py-3">
+          <span class="font-semibold lg:font-normal text-sm text-gray-800 ">
+            Average token age consumed
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Free
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Startup
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Team
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Enterprise
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 pb-1.5 lg:py-3">
+          <span class="font-semibold lg:font-normal text-sm text-gray-800 ">
+            Exchange flow
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Free
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Startup
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Team
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Enterprise
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 pb-1.5 lg:py-3">
+          <span class="font-semibold lg:font-normal text-sm text-gray-800 ">
+            Total ERC20 exchange funds flow
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Free
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Startup
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Team
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Enterprise
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 pb-1.5 lg:py-3">
+          <span class="font-semibold lg:font-normal text-sm text-gray-800 ">
+            Transaction volume
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Free
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Startup
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Team
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Enterprise
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 pb-1.5 lg:py-3">
+          <span class="font-semibold lg:font-normal text-sm text-gray-800 ">
+            Total circulation (beta)
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Free
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Startup
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Team
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Enterprise
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 pb-1.5 lg:py-3">
+          <span class="font-semibold lg:font-normal text-sm text-gray-800 ">
+            Velocity of tokens (beta)
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Free
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Startup
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Team
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Enterprise
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 pb-1.5 lg:py-3">
+          <span class="font-semibold lg:font-normal text-sm text-gray-800 ">
+            ETH gas used
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Free
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Startup
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Team
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Enterprise
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+    </div>
+    <!-- End Section -->
+
+    <!-- Section -->
+    <div class="mt-6 space-y-4 lg:space-y-0">
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 lg:py-3">
+          <span class="text-lg font-semibold text-gray-800 ">
+            Social data
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="hidden lg:block lg:col-span-1 py-1.5 lg:py-3 px-4 lg:px-0 lg:text-center">
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="hidden lg:block lg:col-span-1 py-1.5 lg:py-3 px-4 lg:px-0 lg:text-center">
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="hidden lg:block lg:col-span-1 py-1.5 lg:py-3 px-4 lg:px-0 lg:text-center">
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="hidden lg:block lg:col-span-1 py-1.5 lg:py-3 px-4 lg:px-0 lg:text-center">
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 pb-1.5 lg:py-3">
+          <span class="font-semibold lg:font-normal text-sm text-gray-800 ">
+            Dev activity
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Free
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Startup
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Team
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Enterprise
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 pb-1.5 lg:py-3">
+          <span class="font-semibold lg:font-normal text-sm text-gray-800 ">
+            Topic search
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Free
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Startup
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Team
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Enterprise
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+
+      <!-- List -->
+      <ul class="grid lg:grid-cols-6 lg:gap-6">
+        <!-- Item -->
+        <li class="lg:col-span-2 pb-1.5 lg:py-3">
+          <span class="font-semibold lg:font-normal text-sm text-gray-800 ">
+            Relative social dominance
+          </span>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Free
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Startup
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Team
+            </span>
+            <svg class="shrink-0 size-5 text-gray-400 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+
+        <!-- Item -->
+        <li class="col-span-1 py-1.5 lg:py-3 border-b border-gray-200 ">
+          <div class="grid grid-cols-2 md:grid-cols-6 lg:block">
+            <span class="lg:hidden md:col-span-2 text-sm text-gray-800 ">
+              Enterprise
+            </span>
+            <svg class="shrink-0 size-5 text-blue-600 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </li>
+        <!-- End Item -->
+      </ul>
+      <!-- End List -->
+    </div>
+    <!-- End Section -->
+
+    <!-- Header -->
+    <div class="hidden lg:block mt-6">
+      <!-- Grid -->
+      <div class="grid grid-cols-6 gap-6">
+        <div class="col-span-2">
+        </div>
+        <!-- End Col -->
+
+        <div class="col-span-1">
+          <a class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-50 " href="#">
+            Get started
+          </a>
+        </div>
+        <!-- End Col -->
+
+        <div class="col-span-1">
+          <a class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none" href="#">
+            Get started
+          </a>
+        </div>
+        <!-- End Col -->
+
+        <div class="col-span-1">
+          <a class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-50 " href="#">
+            Get started
+          </a>
+        </div>
+        <!-- End Col -->
+
+        <div class="col-span-1">
+          <a class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-50 " href="#">
+            Get started
+          </a>
+        </div>
+        <!-- End Col -->
+      </div>
+      <!-- End Grid -->
+    </div>
+    <!-- End Header -->
+
+    <!-- Button Group -->
+    <div class="mt-8 md:mt-12 flex justify-center items-center gap-x-3">
+      <p class="text-sm text-gray-500 ">
+        Need a custom plan?
+      </p>
+
+      <button type="button" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-gray-50 ">
+        Contact us
+      </button>
+    </div>
+    <!-- End Button Group -->
+  </div>
+</div>
+<!-- End Comparison Table -->
+
+
+
+
+
+<!-- Testimonials -->
+<div class="relative max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+  <!-- Blockquote -->
+  <blockquote class="text-center lg:mx-auto lg:w-3/5">
+    <svg class="mx-auto w-20 h-auto sm:w-28 text-gray-800 " width="106" height="36" viewBox="0 0 106 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M55.4732 9.52669C55.4732 10.6846 54.5258 11.6846 53.3153 11.6846C52.1048 11.6846 51.1574 10.7372 51.1574 9.52669C51.1574 8.31616 52.0521 7.36879 53.3153 7.36879C54.5785 7.47406 55.4732 8.42142 55.4732 9.52669ZM46.6837 13.8425C46.6837 14.053 46.6837 14.3688 46.6837 14.3688C46.6837 14.3688 45.6837 13.053 43.5258 13.053C39.9469 13.053 37.1574 15.7898 37.1574 19.5267C37.1574 23.2635 39.8942 26.0004 43.5258 26.0004C45.7363 26.0004 46.6837 24.6319 46.6837 24.6319V25.2109C46.6837 25.4741 46.8942 25.6846 47.1574 25.6846H49.789V13.3688C49.789 13.3688 47.3679 13.3688 47.1574 13.3688C46.8942 13.3688 46.6837 13.632 46.6837 13.8425ZM46.6837 21.7372C46.21 22.4741 45.21 23.1056 44.0521 23.1056C41.9469 23.1056 40.3679 21.7898 40.3679 19.5793C40.3679 17.3688 41.9995 16.053 44.0521 16.053C45.21 16.053 46.2627 16.6846 46.6837 17.4214V21.7372ZM51.789 13.3688H54.9469V25.6846H51.789V13.3688ZM98.789 13.053C96.6311 13.053 95.6311 14.3688 95.6311 14.3688V7.47406H92.4732V25.7372C92.4732 25.7372 94.8942 25.7372 95.1048 25.7372C95.3679 25.7372 95.5785 25.5267 95.5785 25.2635V24.6846C95.5785 24.6846 96.5785 26.053 98.7364 26.053C102.315 26.053 105.105 23.3162 105.105 19.5793C105.157 15.7898 102.368 13.053 98.789 13.053ZM98.2627 23.053C97.0521 23.053 96.1048 22.4214 95.6311 21.6846V17.2635C96.1048 16.632 97.1574 15.8951 98.2627 15.8951C100.368 15.8951 101.947 17.2109 101.947 19.4214C101.947 21.632 100.368 23.053 98.2627 23.053ZM90.8416 18.4214V25.7898H87.6837V18.7898C87.6837 16.7372 87.0521 15.9477 85.2627 15.9477C84.3153 15.9477 83.3153 16.4214 82.6837 17.1583V25.7372H79.5258V13.3688H81.9995C82.2627 13.3688 82.4732 13.5793 82.4732 13.8425V14.3688C83.3679 13.4214 84.6311 13.053 85.8416 13.053C87.21 13.053 88.3679 13.4214 89.2627 14.2109C90.4206 15.1583 90.8416 16.3162 90.8416 18.4214ZM71.8942 13.053C69.7364 13.053 68.7364 14.3688 68.7364 14.3688V7.47406H65.5785V25.7372C65.5785 25.7372 67.9995 25.7372 68.21 25.7372C68.4732 25.7372 68.6837 25.5267 68.6837 25.2635V24.6846C68.6837 24.6846 69.6837 26.053 71.8416 26.053C75.4206 26.053 78.21 23.3162 78.21 19.5793C78.2627 15.7898 75.4732 13.053 71.8942 13.053ZM71.3679 23.053C70.1574 23.053 69.21 22.4214 68.7364 21.6846V17.2635C69.21 16.632 70.2627 15.8951 71.3679 15.8951C73.4732 15.8951 75.0521 17.2109 75.0521 19.4214C75.0521 21.632 73.4732 23.053 71.3679 23.053ZM62.8416 13.053C63.789 13.053 64.2627 13.2109 64.2627 13.2109V16.1056C64.2627 16.1056 61.6311 15.2109 59.9995 17.1056V25.7372H56.8416V13.3688C56.8416 13.3688 59.2627 13.3688 59.4732 13.3688C59.7364 13.3688 59.9469 13.5793 59.9469 13.8425V14.3688C60.5785 13.6846 61.8942 13.053 62.8416 13.053ZM30.1574 24.6319C29.9995 24.2635 29.8416 23.7898 29.6837 23.4741C29.4206 22.8951 29.1574 22.3162 28.9469 21.7898L28.8942 21.7372C26.6311 16.8425 24.21 11.8425 21.6311 6.89511L21.5258 6.68458C21.2627 6.2109 20.9995 5.68458 20.7363 5.15827C20.4206 4.57932 20.1048 3.94774 19.5785 3.36879C18.5258 2.053 16.9995 1.31616 15.4206 1.31616C13.789 1.31616 12.3153 2.053 11.21 3.26353C10.6837 3.89511 10.3153 4.47406 9.99951 5.10564C9.73635 5.63195 9.47319 6.15827 9.21003 6.63195L9.10477 6.84248C6.57845 11.7372 4.10477 16.7372 1.84161 21.6846L1.78898 21.7372C1.57845 22.2635 1.3153 22.8425 1.05214 23.4214C0.894243 23.7898 0.736348 24.1583 0.578453 24.5793C0.1574 25.7898 -0.000494055 26.9477 0.210032 28.1056C0.578453 30.5793 2.21003 32.632 4.47319 33.5267C5.3153 33.8951 6.21003 34.053 7.10477 34.053C7.36793 34.053 7.68372 34.0004 7.94687 34.0004C9.05214 33.8951 10.1574 33.5267 11.21 32.8951C12.5785 32.1583 13.8416 31.053 15.2627 29.4741C16.6837 31.053 17.9995 32.1056 19.3153 32.8951C20.4206 33.5267 21.5258 33.8951 22.5785 34.0004C22.8416 34.053 23.1574 34.053 23.4206 34.053C24.3153 34.053 25.2627 33.8951 26.0521 33.5267C28.3679 32.632 29.9469 30.5267 30.3153 28.1056C30.6837 26.9477 30.5785 25.8425 30.1574 24.6319ZM15.3679 26.3162C13.5785 24.1056 12.4732 22.0004 12.0521 20.2109C11.8942 19.4741 11.8416 18.7898 11.9469 18.2109C11.9995 17.6846 12.21 17.2109 12.4732 16.8425C13.1048 15.9477 14.1574 15.4214 15.3679 15.4214C16.5785 15.4214 17.6837 15.9477 18.2627 16.8425C18.5258 17.2109 18.7363 17.6846 18.789 18.2109C18.8942 18.7898 18.8416 19.4741 18.6837 20.2109C18.2627 21.9477 17.1048 24.053 15.3679 26.3162ZM28.4206 27.8425C28.21 29.5267 27.0521 31.0004 25.4206 31.6846C24.6311 32.0004 23.789 32.1056 22.9469 32.0004C22.1048 31.8951 21.3153 31.632 20.4732 31.1583C19.3153 30.5267 18.1048 29.4741 16.7363 28.0004C18.8942 25.3688 20.21 22.8951 20.6837 20.7372C20.8942 19.7372 20.9469 18.7898 20.8416 17.9477C20.7363 17.1056 20.4206 16.3688 19.9469 15.7372C18.9469 14.2635 17.21 13.4214 15.3153 13.4214C13.4206 13.4214 11.6837 14.3162 10.6837 15.7372C10.21 16.3688 9.94687 17.1583 9.78898 17.9477C9.68372 18.7898 9.68372 19.7372 9.94687 20.7372C10.4206 22.8951 11.789 25.3688 13.8942 28.0004C12.5258 29.5267 11.3153 30.5267 10.1574 31.1583C9.3153 31.632 8.47319 31.8951 7.68372 32.0004C6.78898 32.1056 5.94687 31.9477 5.21003 31.6846C3.57845 31.053 2.47319 29.5267 2.21003 27.8425C2.10477 27.0004 2.1574 26.2109 2.52582 25.2635C2.63108 24.9477 2.78898 24.632 2.94687 24.2109C3.1574 23.6846 3.42056 23.1056 3.68372 22.5793L3.73635 22.5267C5.99951 17.632 8.42056 12.632 10.9469 7.78985L11.0521 7.57932C11.3153 7.10564 11.5785 6.57932 11.8416 6.053C12.1048 5.52669 12.4206 5.053 12.7363 4.63195C13.4206 3.84248 14.3679 3.42143 15.3679 3.42143C16.3679 3.42143 17.3153 3.84248 17.9995 4.63195C18.3679 5.053 18.6311 5.52669 18.8942 6.053C19.1574 6.52669 19.4206 7.053 19.6837 7.57932L19.789 7.78985C22.2627 12.6846 24.6837 17.6846 26.9469 22.5267V22.5793C27.21 23.1056 27.4206 23.6846 27.6837 24.2109C27.8416 24.5793 27.9995 24.9477 28.1048 25.2635C28.4732 26.1583 28.5785 27.0004 28.4206 27.8425Z" fill="currentColor"></path>
+    </svg>
+
+    <div class="mt-6 lg:mt-10">
+      <p class="relative text-xl sm:text-2xl md:text-3xl md:leading-normal font-medium text-gray-800">
+        <svg class="absolute top-0 start-0 transform -translate-x-8 -translate-y-8 size-16 text-gray-200 sm:h-24 sm:w-24 " width="16" height="13" viewBox="0 0 16 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M7.18079 9.25611C7.18079 10.0101 6.93759 10.6211 6.45119 11.0891C5.96479 11.5311 5.35039 11.7521 4.60799 11.7521C3.71199 11.7521 2.96958 11.4531 2.38078 10.8551C1.81758 10.2571 1.53598 9.39911 1.53598 8.28111C1.53598 7.08511 1.86878 5.91511 2.53438 4.77111C3.22559 3.60111 4.18559 2.67811 5.41439 2.00211L6.29759 3.36711C5.63199 3.83511 5.09439 4.35511 4.68479 4.92711C4.30079 5.49911 4.04479 6.16211 3.91679 6.91611C4.14719 6.81211 4.41599 6.76011 4.72319 6.76011C5.43999 6.76011 6.02879 6.99411 6.48959 7.46211C6.95039 7.93011 7.18079 8.52811 7.18079 9.25611ZM14.2464 9.25611C14.2464 10.0101 14.0032 10.6211 13.5168 11.0891C13.0304 11.5311 12.416 11.7521 11.6736 11.7521C10.7776 11.7521 10.0352 11.4531 9.44639 10.8551C8.88319 10.2571 8.60159 9.39911 8.60159 8.28111C8.60159 7.08511 8.93439 5.91511 9.59999 4.77111C10.2912 3.60111 11.2512 2.67811 12.48 2.00211L13.3632 3.36711C12.6976 3.83511 12.16 4.35511 11.7504 4.92711C11.3664 5.49911 11.1104 6.16211 10.9824 6.91611C11.2128 6.81211 11.4816 6.76011 11.7888 6.76011C12.5056 6.76011 13.0944 6.99411 13.5552 7.46211C14.016 7.93011 14.2464 8.52811 14.2464 9.25611Z" fill="currentColor"/>
+        </svg>
+        <span class="relative z-10 italic text-gray-800 ">I just wanted to say that I'm very happy with my purchase of Preline so far. The documentation is outstanding - clear and detailed.</span>
+      </p>
+    </div>
+
+    <footer class="mt-6">
+      <div class="font-semibold text-gray-800 ">Philip</div>
+      <div class="text-sm text-gray-500 ">Product Manager | Airbnb</div>
+    </footer>
+  </blockquote>
+  <!-- End Blockquote -->
+</div>
+<!-- End Testimonials -->
+
+
+
+
+<!-- FAQ -->
+<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+  <!-- Title -->
+  <div class="max-w-5xl mx-auto text-center mb-10 lg:mb-14">
+    <h2 class="text-2xl font-bold md:text-4xl md:leading-tight ">Your questions, answered</h2>
+    <p class="mt-1 text-gray-600 ">Answers to the most frequently asked questions.</p>
+  </div>
+  <!-- End Title -->
+
+  <div class="max-w-5xl mx-auto">
+    <!-- Accordion -->
+    <div class="hs-accordion-group">
+      <div class="hs-accordion hs-accordion-active:bg-gray-100 rounded-xl p-6 /10 active" id="hs-basic-with-title-and-arrow-stretched-heading-one">
+        <button class="hs-accordion-toggle group pb-3 inline-flex items-center justify-between gap-x-3 w-full md:text-lg font-semibold text-start text-gray-800 rounded-lg transition hover:text-gray-500 focus:outline-hidden focus:text-gray-500 " aria-expanded="true" aria-controls="hs-basic-with-title-and-arrow-stretched-collapse-one">
+          Can I cancel at anytime?
+          <svg class="hs-accordion-active:hidden block shrink-0 size-5 text-gray-600 group-hover:text-gray-500 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          <svg class="hs-accordion-active:block hidden shrink-0 size-5 text-gray-600 group-hover:text-gray-500 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div id="hs-basic-with-title-and-arrow-stretched-collapse-one" class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300" role="region" aria-labelledby="hs-basic-with-title-and-arrow-stretched-heading-one">
+          <p class="text-gray-800 ">
+            Yes, you can cancel anytime no questions are asked while you cancel but we would highly appreciate if you will give us some feedback.
+          </p>
+        </div>
+      </div>
+
+      <div class="hs-accordion hs-accordion-active:bg-gray-100 rounded-xl p-6 /10" id="hs-basic-with-title-and-arrow-stretched-heading-two">
+        <button class="hs-accordion-toggle group pb-3 inline-flex items-center justify-between gap-x-3 w-full md:text-lg font-semibold text-start text-gray-800 rounded-lg transition hover:text-gray-500 focus:outline-hidden focus:text-gray-500 " aria-expanded="false" aria-controls="hs-basic-with-title-and-arrow-stretched-collapse-two">
+          My team has credits. How do we use them?
+          <svg class="hs-accordion-active:hidden block shrink-0 size-5 text-gray-600 group-hover:text-gray-500 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          <svg class="hs-accordion-active:block hidden shrink-0 size-5 text-gray-600 group-hover:text-gray-500 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div id="hs-basic-with-title-and-arrow-stretched-collapse-two" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" role="region" aria-labelledby="hs-basic-with-title-and-arrow-stretched-heading-two">
+          <p class="text-gray-800 ">
+            Once your team signs up for a subscription plan. This is where we sit down, grab a cup of coffee and dial in the details.
+          </p>
+        </div>
+      </div>
+
+      <div class="hs-accordion hs-accordion-active:bg-gray-100 rounded-xl p-6 /10" id="hs-basic-with-title-and-arrow-stretched-heading-three">
+        <button class="hs-accordion-toggle group pb-3 inline-flex items-center justify-between gap-x-3 w-full md:text-lg font-semibold text-start text-gray-800 rounded-lg transition hover:text-gray-500 focus:outline-hidden focus:text-gray-500 " aria-expanded="false" aria-controls="hs-basic-with-title-and-arrow-stretched-collapse-three">
+          How does Preline's pricing work?
+          <svg class="hs-accordion-active:hidden block shrink-0 size-5 text-gray-600 group-hover:text-gray-500 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          <svg class="hs-accordion-active:block hidden shrink-0 size-5 text-gray-600 group-hover:text-gray-500 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div id="hs-basic-with-title-and-arrow-stretched-collapse-three" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" role="region" aria-labelledby="hs-basic-with-title-and-arrow-stretched-heading-three">
+          <p class="text-gray-800 ">
+            Our subscriptions are tiered. Understanding the task at hand and ironing out the wrinkles is key.
+          </p>
+        </div>
+      </div>
+
+      <div class="hs-accordion hs-accordion-active:bg-gray-100 rounded-xl p-6 /10" id="hs-basic-with-title-and-arrow-stretched-heading-four">
+        <button class="hs-accordion-toggle group pb-3 inline-flex items-center justify-between gap-x-3 w-full md:text-lg font-semibold text-start text-gray-800 rounded-lg transition hover:text-gray-500 focus:outline-hidden focus:text-gray-500 " aria-expanded="false" aria-controls="hs-basic-with-title-and-arrow-stretched-collapse-four">
+          How secure is Preline?
+          <svg class="hs-accordion-active:hidden block shrink-0 size-5 text-gray-600 group-hover:text-gray-500 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          <svg class="hs-accordion-active:block hidden shrink-0 size-5 text-gray-600 group-hover:text-gray-500 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div id="hs-basic-with-title-and-arrow-stretched-collapse-four" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" role="region" aria-labelledby="hs-basic-with-title-and-arrow-stretched-heading-four">
+          <p class="text-gray-800 ">
+            Protecting the data you trust to Preline is our first priority. This part is really crucial in keeping the project in line to completion.
+          </p>
+        </div>
+      </div>
+
+      <div class="hs-accordion hs-accordion-active:bg-gray-100 rounded-xl p-6 /10" id="hs-basic-with-title-and-arrow-stretched-heading-five">
+        <button class="hs-accordion-toggle group pb-3 inline-flex items-center justify-between gap-x-3 w-full md:text-lg font-semibold text-start text-gray-800 rounded-lg transition hover:text-gray-500 focus:outline-hidden focus:text-gray-500 " aria-expanded="false" aria-controls="hs-basic-with-title-and-arrow-stretched-collapse-five">
+          How do I get access to a theme I purchased?
+          <svg class="hs-accordion-active:hidden block shrink-0 size-5 text-gray-600 group-hover:text-gray-500 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          <svg class="hs-accordion-active:block hidden shrink-0 size-5 text-gray-600 group-hover:text-gray-500 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div id="hs-basic-with-title-and-arrow-stretched-collapse-five" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" role="region" aria-labelledby="hs-basic-with-title-and-arrow-stretched-heading-five">
+          <p class="text-gray-800 ">
+            If you lose the link for a theme you purchased, don't panic! We've got you covered. You can login to your account, tap your avatar in the upper right corner, and tap Purchases. If you didn't create a login or can't remember the information, you can use our handy Redownload page, just remember to use the same email you originally made your purchases with.
+          </p>
+        </div>
+      </div>
+
+      <div class="hs-accordion hs-accordion-active:bg-gray-100 rounded-xl p-6 /10" id="hs-basic-with-title-and-arrow-stretched-heading-six">
+        <button class="hs-accordion-toggle group pb-3 inline-flex items-center justify-between gap-x-3 w-full md:text-lg font-semibold text-start text-gray-800 rounded-lg transition hover:text-gray-500 focus:outline-hidden focus:text-gray-500 " aria-expanded="false" aria-controls="hs-basic-with-title-and-arrow-stretched-collapse-six">
+          Upgrade License Type
+          <svg class="hs-accordion-active:hidden block shrink-0 size-5 text-gray-600 group-hover:text-gray-500 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          <svg class="hs-accordion-active:block hidden shrink-0 size-5 text-gray-600 group-hover:text-gray-500 " xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+        <div id="hs-basic-with-title-and-arrow-stretched-collapse-six" class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300" role="region" aria-labelledby="hs-basic-with-title-and-arrow-stretched-heading-six">
+          <p class="text-gray-800 ">
+            There may be times when you need to upgrade your license from the original type you purchased and we have a solution that ensures you can apply your original purchase cost to the new license purchase.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- End Accordion -->
+  </div>
+</div>
+<!-- End FAQ -->
+
+
+<footer class="mt-auto w-full max-w-[85rem] py-10 px-4 sm:px-6 lg:px-8 mx-auto">
+  <!-- Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-5">
+    <div>
+      <a class="flex-none text-xl font-semibold text-black focus:outline-hidden " href="#" aria-label="Brand">Brand</a>
+    </div>
+    <!-- End Col -->
+
+    <ul class="text-center">
+      <li class="inline-block relative pe-8 last:pe-0 last-of-type:before:hidden before:absolute before:top-1/2 before:end-3 before:-translate-y-1/2 before:content-['/'] before:text-gray-300 ">
+        <a class="inline-flex gap-x-2 text-sm text-gray-500 hover:text-gray-800 focus:outline-hidden focus:text-gray-800 " href="#">
+          About
+        </a>
+      </li>
+      <li class="inline-block relative pe-8 last:pe-0 last-of-type:before:hidden before:absolute before:top-1/2 before:end-3 before:-translate-y-1/2 before:content-['/'] before:text-gray-300 ">
+        <a class="inline-flex gap-x-2 text-sm text-gray-500 hover:text-gray-800 focus:outline-hidden focus:text-gray-800 " href="#">
+          Services
+        </a>
+      </li>
+      <li class="inline-block relative pe-8 last:pe-0 last-of-type:before:hidden before:absolute before:top-1/2 before:end-3 before:-translate-y-1/2 before:content-['/'] before:text-gray-300 ">
+        <a class="inline-flex gap-x-2 text-sm text-gray-500 hover:text-gray-800 focus:outline-hidden focus:text-gray-800 " href="#">
+          Blog
+        </a>
+      </li>
+    </ul>
+    <!-- End Col -->
+
+    <!-- Social Brands -->
+    <div class="md:text-end space-x-2">
+      <a class="size-8 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none " href="#">
+        <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M15.545 6.558a9.42 9.42 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.689 7.689 0 0 1 5.352 2.082l-2.284 2.284A4.347 4.347 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.792 4.792 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.702 3.702 0 0 0 1.599-2.431H8v-3.08h7.545z"/>
+        </svg>
+      </a>
+      <a class="size-8 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none " href="#">
+        <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"/>
+        </svg>
+      </a>
+      <a class="size-8 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none " href="#">
+        <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+      </a>
+      <a class="size-8 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-500 hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none " href="#">
+        <svg class="shrink-0 size-3.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M3.362 10.11c0 .926-.756 1.681-1.681 1.681S0 11.036 0 10.111C0 9.186.756 8.43 1.68 8.43h1.682v1.68zm.846 0c0-.924.756-1.68 1.681-1.68s1.681.756 1.681 1.68v4.21c0 .924-.756 1.68-1.68 1.68a1.685 1.685 0 0 1-1.682-1.68v-4.21zM5.89 3.362c-.926 0-1.682-.756-1.682-1.681S4.964 0 5.89 0s1.68.756 1.68 1.68v1.682H5.89zm0 .846c.924 0 1.68.756 1.68 1.681S6.814 7.57 5.89 7.57H1.68C.757 7.57 0 6.814 0 5.89c0-.926.756-1.682 1.68-1.682h4.21zm6.749 1.682c0-.926.755-1.682 1.68-1.682.925 0 1.681.756 1.681 1.681s-.756 1.681-1.68 1.681h-1.681V5.89zm-.848 0c0 .924-.755 1.68-1.68 1.68A1.685 1.685 0 0 1 8.43 5.89V1.68C8.43.757 9.186 0 10.11 0c.926 0 1.681.756 1.681 1.68v4.21zm-1.681 6.748c.926 0 1.682.756 1.682 1.681S11.036 16 10.11 16s-1.681-.756-1.681-1.68v-1.682h1.68zm0-.847c-.924 0-1.68-.755-1.68-1.68 0-.925.756-1.681 1.68-1.681h4.21c.924 0 1.68.756 1.68 1.68 0 .926-.756 1.681-1.68 1.681h-4.21z"/>
+        </svg>
+      </a>
+    </div>
+    <!-- End Social Brands -->
+  </div>
+  <!-- End Grid -->
+</footer>
+    <script>
+      const terminal = document.getElementById('terminal')
+      const inputText = document.getElementById('inputText')
+    
+      const commands = [
+        "npm install clifixer",
+        "npx clifixer init --appkey=YOUR_APP_KEY --token=YOUR_USER_TOKEN",
+        "npx clifixer chat"
+      ];
+    
+      const responses = [
+        "✔ clifixer successfully installed.",
+        "✔ App initialized. Configuration saved to clifixer.config.json",
+        "✔ Chat started. You can now talk to clifixer AI."
+      ];
+    
+      async function typeText(text, element, delay = 50) {
+        for (let i = 0; i < text.length; i++) {
+          element.innerHTML += text[i] === '\n' ? '<br>' : text[i];
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      }
+    
+      async function showLoader(duration = 1000) {
+        const loader = document.createElement('div');
+        loader.className = "text-white opacity-60";
+        loader.textContent = '...';
+        terminal.appendChild(loader);
+        terminal.scrollTop = terminal.scrollHeight;
+        await new Promise(resolve => setTimeout(resolve, duration));
+        loader.remove();
+      }
+    
+      async function runTerminal() {
+        terminal.innerHTML = "";
+        for (let i = 0; i < commands.length; i++) {
+          // Commande à lettre par lettre
+          const commandLine = document.createElement('div');
+          commandLine.className = 'text-white';
+          terminal.appendChild(commandLine);
+          await typeText(commands[i], commandLine);
+          terminal.appendChild(commandLine);
+          terminal.scrollTop = terminal.scrollHeight;
+    
+          // Réponse après un loader
+          await showLoader();
+          const responseLine = document.createElement('div');
+          responseLine.className = 'text-white opacity-50';
+          terminal.appendChild(responseLine);
+          await typeText(responses[i], responseLine);
+          terminal.scrollTop = terminal.scrollHeight;
+    
+          // Pause avant de recommencer
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+    
+        // Reprend avec la même séquence après quelques secondes
+        runTerminal();
+      }
+    
+      runTerminal();
+    
+    
+  document.addEventListener('DOMContentLoaded', () => {
+    // Active les tabs avec animation
+    const tabs = document.querySelectorAll('[role="tab"]');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = document.querySelector(tab.getAttribute('data-hs-tab'));
+        document.querySelectorAll('[role="tabpanel"]').forEach(panel => {
+          panel.classList.add('hidden', 'opacity-0');
+        });
+        target.classList.remove('hidden');
+        setTimeout(() => target.classList.remove('opacity-0'), 20);
+      });
+    });
+  });
+</script>
+    <script src="js/preline.min.js"></script>
+    <script src="./src/firebase.js"></script>
+    <script src="./src/auth.js"></script>
+
+</body>
+
+</html>
