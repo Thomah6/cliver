@@ -11,9 +11,7 @@
     "express": "^4.17.1", 
     "firebase": "^9.1.2", 
     "node-fetch": "^2.6.1", 
-    "body-parser": "^2.2.0", 
-    "path": "^0.12.7", 
-    "fs": "^0.0.1" 
+    "body-parser": "^2.2.0" 
   },
   "engines": {
     "node": ">=14.0.0" 
