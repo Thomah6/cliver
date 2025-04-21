@@ -10,8 +10,9 @@
   "dependencies": {
     "express": "^4.17.1", 
     "firebase": "^9.1.2", 
+    "firebase-admin": "^13.2.0",
     "node-fetch": "^2.6.1", 
-    "body-parser": "^2.2.0"  
+    "body-parser": "^2.2.0"
   },
   "engines": {
     "node": ">=14.0.0" 
