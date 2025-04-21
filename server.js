@@ -2,11 +2,11 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import bodyParser from 'body-parser';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import fs from 'fs';
 import fetch from 'node-fetch'; // Ensure this is installed for API calls
-import admin from 'firebase-admin'; // Import Firebase Admin SDK
 
 // Firebase configuration (hardcoded for now)
 const firebaseConfig = {
@@ -19,21 +19,15 @@ const firebaseConfig = {
   measurementId: "G-WECQ09G5K5",
 };
 
+
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
 
-// Initialize Firebase Admin SDK
-const serviceAccountPath = path.resolve(__dirname, 'firebase-admin-key.json');
-
-// Initialiser Firebase Admin SDK
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccountPath),
-});
-
 const app = express();
 const DATA_DIR = path.resolve('./data');
 const MAX_FILE_SIZE = 1024 * 1024; // 1MB max
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -46,7 +40,9 @@ const cleanAIResponse = (response) => {
   return response.replace(/<\/?[^>]+(>|$)/g, '').trim(); // Remove HTML tags and trim
 };
 
+
 const port = process.env.PORT || 3000;
+
 
 // Serve les fichiers statiques (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -54,6 +50,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Route GET
 app.get('/api/mon-endpoint', (req, res) => {
   res.json({ message: 'Hello from my API!' });
+
+
 });
 
 // Route POST
@@ -62,37 +60,16 @@ app.post('/api/mon-endpoint', async (req, res) => {
     // Authorization header check
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'Token manquant ou mal formé' });
+      return res.status(401).json({ error: 'UID manquant ou mal formé' });
     }
-    const token = authHeader.split(' ')[1];
+    const uid = authHeader.split(' ')[1];
 
-    // Vérifie l'authentification Firebase avec le token
-    try {
-      const decodedToken = await admin.auth().verifyIdToken(token);
-      const userUID = decodedToken.uid;
+    // Verify UID in Firebase
+    const userRef = doc(db, 'users', uid); // Replace 'users' with your collection name
+    const docSnap = await getDoc(userRef);
 
-      console.log('Decoded Token:', decodedToken);
-
-      const userRef = collection(db, 'users');
-      const q = query(userRef, where('uid', '==', userUID));
-      const querySnapshot = await getDocs(q);
-
-      if (querySnapshot.empty) {
-        console.error('No matching documents found for UID:', userUID);
-        return res.status(404).json({ error: 'Utilisateur non trouvé' });
-      }
-
-      const user = querySnapshot.docs[0].data();
-      console.log('User data:', user);
-
-      const adminUID = 'admin_uid_here'; // Replace with actual admin UID
-      if (userUID !== adminUID) {
-        console.error('Access denied for userUID:', userUID);
-        return res.status(403).json({ error: 'Accès interdit : seul l\'admin peut effectuer cette action' });
-      }
-    } catch (error) {
-      console.error('Firebase Admin error:', error.message);
-      return res.status(500).json({ error: 'Erreur interne', details: error.message });
+    if (!docSnap.exists()) {
+      return res.status(404).json({ error: 'UID non trouvé' });
     }
 
     // Parse request body
@@ -115,7 +92,7 @@ app.post('/api/mon-endpoint', async (req, res) => {
       fs.mkdirSync(DATA_DIR, { recursive: true });
     }
 
-    const dataFile = path.join(DATA_DIR, `${token}.json`);
+    const dataFile = path.join(DATA_DIR, `${uid}.json`);
     if (fs.existsSync(dataFile) && fs.statSync(dataFile).size > MAX_FILE_SIZE) {
       return res.status(400).json({ error: 'Fichier trop gros' });
     }
@@ -170,7 +147,7 @@ Tu es une intelligence spécialisée intégrée dans un projet nommé **Buglix**
       }
     }
 
-    res.json({ status: 'success', message: 'Données enregistrées', data_id: token });
+    res.json({ status: 'success', message: 'Données enregistrées', data_id: uid });
   } catch (error) {
     console.error('Erreur:', error);
     res.status(500).json({ error: 'Erreur interne', details: error.message });
