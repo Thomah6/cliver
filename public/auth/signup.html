@@ -130,6 +130,7 @@
                   </div>
                   <!-- End Form Group -->
 
+                  <p id="signup-error" class="text-red-500 text-sm text-center hidden"></p>
 
                   <button id="signup-btn" type="submit"
                     class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-full border border-transparent bg-linear-to-tl from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 text-white  focus:outline-hidden focus:bg-purple-700 disabled:opacity-50 disabled:pointer-events-none">Sign
@@ -169,19 +170,26 @@
     document.getElementById("signup-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       const username = document.getElementById("username").value;
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const errorContainer = document.getElementById("signup-error");
 
       const signupBtn = document.getElementById("signup-btn");
       signupBtn.disabled = true;
-      signupBtn.textContent = "Inscription...";
+      signupBtn.textContent = "Signing up...";
 
       try {
+        errorContainer.classList.add("hidden");
         await register(username, email, password);
-        alert("Inscription réussie !");
         window.location.href = "../dash/"; // Redirige vers le tableau de bord
       } catch (error) {
-        alert(error.message);
+        console.error("Erreur d'inscription :", error);
+
+// Message d'erreur générique
+let errorMessage = "An error occurred, please check your information and try again.";
+
+errorContainer.textContent = errorMessage;
+errorContainer.classList.remove("hidden");
       } finally {
         signupBtn.disabled = false;
         signupBtn.textContent = "Sign up";
