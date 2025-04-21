@@ -45,7 +45,7 @@
         document.getElementById("user-uid").value = userInfo.token || "Non disponible";
         document.getElementById("user-email").textContent = userInfo.email || "Non disponible";
         document.getElementById("user-username").textContent = userInfo.username || "Non disponible";
-        document.getElementById("request-count").textContent = userInfo.request || "Non disponible";
+        document.getElementById("request-count").textContent = userInfo.requests || "Non disponible";
 
         // Mise à jour des initiales
         const initials = userInfo.username
