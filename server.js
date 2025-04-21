@@ -2,11 +2,11 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import bodyParser from 'body-parser';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import fs from 'fs';
 import fetch from 'node-fetch'; // Ensure this is installed for API calls
+import admin from 'firebase-admin'; // Import Firebase Admin SDK
 
 // Firebase configuration (hardcoded for now)
 const firebaseConfig = {
@@ -19,15 +19,21 @@ const firebaseConfig = {
   measurementId: "G-WECQ09G5K5",
 };
 
-
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
 
+// Initialize Firebase Admin SDK
+const serviceAccountPath = path.resolve(__dirname, 'firebase-admin-key.json');
+
+// Initialiser Firebase Admin SDK
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccountPath),
+});
+
 const app = express();
 const DATA_DIR = path.resolve('./data');
 const MAX_FILE_SIZE = 1024 * 1024; // 1MB max
-
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -40,9 +46,7 @@ const cleanAIResponse = (response) => {
   return response.replace(/<\/?[^>]+(>|$)/g, '').trim(); // Remove HTML tags and trim
 };
 
-
 const port = process.env.PORT || 3000;
-
 
 // Serve les fichiers statiques (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -50,8 +54,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Route GET
 app.get('/api/mon-endpoint', (req, res) => {
   res.json({ message: 'Hello from my API!' });
-
-
 });
 
 // Route POST
@@ -64,16 +66,34 @@ app.post('/api/mon-endpoint', async (req, res) => {
     }
     const token = authHeader.split(' ')[1];
 
-// Vérifier si un utilisateur possède ce token dans le champ "token"
-const userRef = collection(db, 'users');
-const q = query(userRef, where('token', '==', token));
-const querySnapshot = await getDocs(q);
+    // Vérifie l'authentification Firebase avec le token
+    try {
+      const decodedToken = await admin.auth().verifyIdToken(token);
+      const userUID = decodedToken.uid;
 
-if (querySnapshot.empty) {
-  return res.status(404).json({ error: 'Token non trouvé' });
-}
+      console.log('Decoded Token:', decodedToken);
 
-const docSnap = querySnapshot.docs[0]; // Tu peux l'utiliser comme avant
+      const userRef = collection(db, 'users');
+      const q = query(userRef, where('uid', '==', userUID));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        console.error('No matching documents found for UID:', userUID);
+        return res.status(404).json({ error: 'Utilisateur non trouvé' });
+      }
+
+      const user = querySnapshot.docs[0].data();
+      console.log('User data:', user);
+
+      const adminUID = 'admin_uid_here'; // Replace with actual admin UID
+      if (userUID !== adminUID) {
+        console.error('Access denied for userUID:', userUID);
+        return res.status(403).json({ error: 'Accès interdit : seul l\'admin peut effectuer cette action' });
+      }
+    } catch (error) {
+      console.error('Firebase Admin error:', error.message);
+      return res.status(500).json({ error: 'Erreur interne', details: error.message });
+    }
 
     // Parse request body
     const contentType = req.headers['content-type'];
