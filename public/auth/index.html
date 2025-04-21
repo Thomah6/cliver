@@ -91,18 +91,15 @@
                               
                             </div>
                             <!-- End Form Group -->
-                  
-                            <button id="login-btn" type="submit" class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-full border border-transparent bg-linear-to-tl from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 text-white  focus:outline-hidden focus:bg-purple-700 disabled:opacity-50 disabled:pointer-events-none">Connexion</button>
+                            <p id="login-error" class="text-red-500 text-sm text-center hidden"></p>
+
+                            <button id="login-btn" type="submit" class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-full border border-transparent bg-linear-to-tl from-blue-600 to-violet-600 hover:from-violet-600 hover:to-blue-600 text-white  focus:outline-hidden focus:bg-purple-700 disabled:opacity-50 disabled:pointer-events-none">Log in</button>
                               
                         </div>
                         </form>
                         <!-- End Form -->
                       </div>
-                      <div class="mt-5 text-center">
-                        <a href="../pricing/" class="inline-block rounded-full bg-gradient-to-tr from-blue-600 to-violet-600 text-white px-5 py-2 font-medium shadow hover:from-violet-600 hover:to-blue-600 transition">
-                          Voir les offres & tarifs
-                        </a>
-                      </div>
+                      
                     </div>
                   </div>
                   
@@ -126,17 +123,23 @@
         const password = document.getElementById("password").value;
         const loginBtn = document.getElementById("login-btn");
         loginBtn.disabled = true;
-        loginBtn.textContent = "Connexion...";
-    
+        loginBtn.textContent = "Logging in...";
+        const errorContainer = document.getElementById("login-error");
+
         try {
+          errorContainer.classList.add("hidden");
           await login(email, password);
-          alert("Connexion réussie !");
           window.location.href = "../dash/"; // Redirige vers le tableau de bord
         } catch (error) {
-          alert(error.message);
-        } finally {
+          console.error("Erreur d'inscription :", error);
+
+// Message d'erreur générique
+let errorMessage = "An error occurred, please check your information and try again.";
+
+errorContainer.textContent = errorMessage;
+errorContainer.classList.remove("hidden");        } finally {
           loginBtn.disabled = false;
-          loginBtn.textContent = "Connexion";
+          loginBtn.textContent = "Log in";
         }
       });
     </script>
