@@ -42,10 +42,10 @@
         }
 
         // Mise à jour des informations utilisateur
-        document.getElementById("user-uid").value = userInfo.uid || "Non disponible";
+        document.getElementById("user-uid").value = userInfo.token || "Non disponible";
         document.getElementById("user-email").textContent = userInfo.email || "Non disponible";
         document.getElementById("user-username").textContent = userInfo.username || "Non disponible";
-        document.getElementById("token-count").textContent = userInfo.token || "Non disponible";
+        document.getElementById("request-count").textContent = userInfo.request || "Non disponible";
 
         // Mise à jour des initiales
         const initials = userInfo.username
@@ -344,7 +344,7 @@
                 Tokens restants
               </h3>
               <p class="mt-1 text-lg font-semibold text-gray-800 dark:text-gray-200">
-                <span id="token-count">0000</span>
+                <span id="request-count">0000</span>
                 <span class="ml-1 text-sm font-normal text-gray-500 dark:text-gray-400">/ 1,000</span>
               </p>
             </div>
@@ -390,7 +390,7 @@
           </div>
         </div>
         <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-          Utilisez ce UID pour authentifier vos messages
+          Utilisez ce token pour authentifier vos messages
         </p>
       </div>
       </div>
