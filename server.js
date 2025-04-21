@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import bodyParser from 'body-parser';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import fs from 'fs';
 import fetch from 'node-fetch'; // Ensure this is installed for API calls
 
@@ -60,17 +60,20 @@ app.post('/api/mon-endpoint', async (req, res) => {
     // Authorization header check
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'UID manquant ou mal formé' });
+      return res.status(401).json({ error: 'Token manquant ou mal formé' });
     }
-    const uid = authHeader.split(' ')[1];
+    const token = authHeader.split(' ')[1];
 
-    // Verify UID in Firebase
-    const userRef = doc(db, 'users', uid); // Replace 'users' with your collection name
-    const docSnap = await getDoc(userRef);
+// Vérifier si un utilisateur possède ce token dans le champ "token"
+const userRef = collection(db, 'users');
+const q = query(userRef, where('token', '==', token));
+const querySnapshot = await getDocs(q);
 
-    if (!docSnap.exists()) {
-      return res.status(404).json({ error: 'UID non trouvé' });
-    }
+if (querySnapshot.empty) {
+  return res.status(404).json({ error: 'Token non trouvé' });
+}
+
+const docSnap = querySnapshot.docs[0]; // Tu peux l'utiliser comme avant
 
     // Parse request body
     const contentType = req.headers['content-type'];
@@ -92,7 +95,7 @@ app.post('/api/mon-endpoint', async (req, res) => {
       fs.mkdirSync(DATA_DIR, { recursive: true });
     }
 
-    const dataFile = path.join(DATA_DIR, `${uid}.json`);
+    const dataFile = path.join(DATA_DIR, `${token}.json`);
     if (fs.existsSync(dataFile) && fs.statSync(dataFile).size > MAX_FILE_SIZE) {
       return res.status(400).json({ error: 'Fichier trop gros' });
     }
@@ -147,7 +150,7 @@ Tu es une intelligence spécialisée intégrée dans un projet nommé **Buglix**
       }
     }
 
-    res.json({ status: 'success', message: 'Données enregistrées', data_id: uid });
+    res.json({ status: 'success', message: 'Données enregistrées', data_id: token });
   } catch (error) {
     console.error('Erreur:', error);
     res.status(500).json({ error: 'Erreur interne', details: error.message });
