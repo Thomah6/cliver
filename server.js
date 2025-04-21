@@ -19,7 +19,6 @@ const firebaseConfig = {
   measurementId: "G-WECQ09G5K5",
 };
 
-
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
@@ -27,7 +26,6 @@ const db = getFirestore(firebaseApp);
 const app = express();
 const DATA_DIR = path.resolve('./data');
 const MAX_FILE_SIZE = 1024 * 1024; // 1MB max
-
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -40,9 +38,7 @@ const cleanAIResponse = (response) => {
   return response.replace(/<\/?[^>]+(>|$)/g, '').trim(); // Remove HTML tags and trim
 };
 
-
 const port = process.env.PORT || 3000;
-
 
 // Serve les fichiers statiques (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -50,8 +46,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Route GET
 app.get('/api/mon-endpoint', (req, res) => {
   res.json({ message: 'Hello from my API!' });
-
-
 });
 
 // Route POST
@@ -60,17 +54,25 @@ app.post('/api/mon-endpoint', async (req, res) => {
     // Authorization header check
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'UID manquant ou mal formé' });
+      return res.status(401).json({ error: 'token manquant ou mal formé' });
     }
-    const uid = authHeader.split(' ')[1];
+    const token = authHeader.split(' ')[1];
 
-    // Verify UID in Firebase
-    const userRef = doc(db, 'users', uid); // Replace 'users' with your collection name
-    const docSnap = await getDoc(userRef);
+    // Vérifiez si le token existe dans Firestore
+    const userRef = db.collection('users');
+    const querySnapshot = await userRef.where('token', '==', token).get();
 
-    if (!docSnap.exists()) {
-      return res.status(404).json({ error: 'UID non trouvé' });
+    if (querySnapshot.empty) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé ou token invalide' });
     }
+
+    // Récupérer les données de l'utilisateur
+    const userDoc = querySnapshot.docs[0];
+    const userData = userDoc.data();
+
+    // Logique supplémentaire si nécessaire
+    console.log('Utilisateur trouvé :', userData);
+
 
     // Parse request body
     const contentType = req.headers['content-type'];
@@ -92,7 +94,7 @@ app.post('/api/mon-endpoint', async (req, res) => {
       fs.mkdirSync(DATA_DIR, { recursive: true });
     }
 
-    const dataFile = path.join(DATA_DIR, `${uid}.json`);
+    const dataFile = path.join(DATA_DIR, `${token}.json`);
     if (fs.existsSync(dataFile) && fs.statSync(dataFile).size > MAX_FILE_SIZE) {
       return res.status(400).json({ error: 'Fichier trop gros' });
     }
@@ -147,9 +149,9 @@ Tu es une intelligence spécialisée intégrée dans un projet nommé **Buglix**
       }
     }
 
-    res.json({ status: 'success', message: 'Données enregistrées', data_id: uid });
+    res.json({ status: 'success', message: 'Données enregistrées', data_id: token });
   } catch (error) {
-    console.error('Erreur:', error);
+    console.error('Erreur lors de la vérification du token ou de l\'enregistrement des données:', error);
     res.status(500).json({ error: 'Erreur interne', details: error.message });
   }
 });
