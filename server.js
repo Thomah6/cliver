@@ -7,6 +7,8 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 import fs from 'fs';
 import fetch from 'node-fetch'; // Ensure this is installed for API calls
+import * as admin from 'firebase-admin';
+import serviceAccount from './firebase-admin-key.json' assert { type: 'json' };
 
 // Firebase configuration (hardcoded for now)
 const firebaseConfig = {
@@ -21,7 +23,12 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
-const db = getFirestore(firebaseApp);
+// Initialiser Firebase Admin SDK
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
+const db = admin.firestore(); // Utiliser Firestore via Admin SDK
 
 const app = express();
 const DATA_DIR = path.resolve('./data');
