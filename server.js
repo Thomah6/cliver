@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import bodyParser from 'body-parser';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 import fs from 'fs';
 import fetch from 'node-fetch'; // Ensure this is installed for API calls
 
@@ -59,8 +59,9 @@ app.post('/api/mon-endpoint', async (req, res) => {
     const token = authHeader.split(' ')[1];
 
     // Vérifiez si le token existe dans Firestore
-    const userRef = db.collection('users');
-    const querySnapshot = await userRef.where('token', '==', token).get();
+    const userRef = collection(db, 'users'); // Utilisez `collection` pour obtenir une référence à la collection
+    const q = query(userRef, where('token', '==', token)); // Créez une requête avec `query` et `where`
+    const querySnapshot = await getDocs(q); // Exécutez la requête avec `getDocs`
 
     if (querySnapshot.empty) {
       return res.status(404).json({ error: 'Utilisateur non trouvé ou token invalide' });
