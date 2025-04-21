@@ -22,6 +22,7 @@ export const register = async (username, email, password) => {
       username: username,
       email: user.email,
       uid: user.uid,
+      role: "user",
       requests: 30, // Valeur par défaut
       token: token,
       createdAt: new Date(),
