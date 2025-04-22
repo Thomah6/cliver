@@ -66,9 +66,8 @@ app.post('/api/mon-endpoint', async (req, res) => {
     const token = authHeader.split(' ')[1];
 
     // Vérifiez si le token existe dans Firestore
-    const userRef = collection(db, 'users'); // Utilisez `collection` pour obtenir une référence à la collection
-    const q = query(userRef, where('token', '==', token)); // Créez une requête avec `query` et `where`
-    const querySnapshot = await getDocs(q); // Exécutez la requête avec `getDocs`
+    const userRef = db.collection('users');
+    const querySnapshot = await userRef.where('token', '==', token).get();
 
     if (querySnapshot.empty) {
       return res.status(404).json({ error: 'Utilisateur non trouvé ou token invalide' });
@@ -80,7 +79,6 @@ app.post('/api/mon-endpoint', async (req, res) => {
 
     // Logique supplémentaire si nécessaire
     console.log('Utilisateur trouvé :', userData);
-
 
     // Parse request body
     const contentType = req.headers['content-type'];
