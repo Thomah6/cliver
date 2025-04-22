@@ -12,22 +12,7 @@ admin.initializeApp({
 });
 const db = admin.firestore();
 
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 
-// Firebase configuration (hardcoded for now)
-const firebaseConfig = {
-  apiKey: "AIzaSyA_1hoEtwJkF_lJC1Jnp4dgQhTdHBrmTJ4",
-  authDomain: "clifixer.firebaseapp.com",
-  projectId: "clifixer",
-  storageBucket: "clifixer.firebasestorage.app",
-  messagingSenderId: "318234897260",
-  appId: "1:318234897260:web:18b58b8df79059bd486149",
-  measurementId: "G-WECQ09G5K5",
-};
-
-// Initialize Firebase
-const firebaseApp = initializeApp(firebaseConfig);
 
 const app = express();
 const DATA_DIR = path.resolve('./data');
