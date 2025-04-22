@@ -105,10 +105,7 @@ app.post('/api/mon-endpoint', async (req, res) => {
       fs.mkdirSync(DATA_DIR, { recursive: true });
     }
 
-    const dataFile = path.join(DATA_DIR, `${token}.json`);
-    if (fs.existsSync(dataFile) && fs.statSync(dataFile).size > MAX_FILE_SIZE) {
-      return res.status(400).json({ error: 'Fichier trop gros' });
-    }
+    
 
     // Save data securely
     const payload = {
