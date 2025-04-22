@@ -2,66 +2,88 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import bodyParser from 'body-parser';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import fs from 'fs';
-import fetch from 'node-fetch';
-import admin from 'firebase-admin';
-import { getFirestore } from 'firebase-admin/firestore';
+import fetch from 'node-fetch'; // Ensure this is installed for API calls
 
-const serviceAccount = JSON.parse(fs.readFileSync('./firebase-admin-key.json', 'utf8'));
+// Firebase configuration (hardcoded for now)
+const firebaseConfig = {
+  apiKey: "AIzaSyA_1hoEtwJkF_lJC1Jnp4dgQhTdHBrmTJ4",
+  authDomain: "clifixer.firebaseapp.com",
+  projectId: "clifixer",
+  storageBucket: "clifixer.firebasestorage.app",
+  messagingSenderId: "318234897260",
+  appId: "1:318234897260:web:18b58b8df79059bd486149",
+  measurementId: "G-WECQ09G5K5",
+};
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
 
-// Middleware de vérification du token
-export async function verifyToken(req, res, next) {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "Token manquant ou invalide" });
-  }
-
-  const token = authHeader.split(" ")[1];
-  const db = getFirestore();
-
-  const usersRef = db.collection("users");
-  const snapshot = await usersRef.where("token", "==", token).limit(1).get();
-
-  if (snapshot.empty) {
-    return res.status(401).json({ error: "Token invalide" });
-  }
-
-  req.user = snapshot.docs[0].data();
-  next();
-}
+// Initialize Firebase
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
 
 const app = express();
 const DATA_DIR = path.resolve('./data');
 const MAX_FILE_SIZE = 1024 * 1024; // 1MB max
 
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Pour parser les body en JSON (important pour les POST)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+// Helper function to clean AI response
 const cleanAIResponse = (response) => {
-  return response.replace(/<\/?[^>]+(>|$)/g, '').trim();
+  return response.replace(/<\/?[^>]+(>|$)/g, '').trim(); // Remove HTML tags and trim
 };
+
 
 const port = process.env.PORT || 3000;
 
+async function verifyUserWithEmailAndPassword(email, password) {
+  const apiKey = "AIzaSyA_1hoEtwJkF_lJC1Jnp4dgQhTdHBrmTJ4"; // Ton apiKey Firebase
+  const url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email,
+      password,
+      returnSecureToken: true
+    })
+  });
+  if (!response.ok) {
+    return null;
+  }
+  return await response.json();
+}
+
+// Serve les fichiers statiques (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Route GET
 app.get('/api/mon-endpoint', (req, res) => {
   res.json({ message: 'Hello from my API!' });
+
+
 });
 
-// Utilise le middleware sur ta route POST
-app.post('/api/mon-endpoint', verifyToken, async (req, res) => {
+// Route POST
+app.post('/api/mon-endpoint', async (req, res) => {
   try {
-    // Ici, req.user contient les infos utilisateur
-    const userData = req.user;
+    const email = req.headers['x-buglix-email'];
+    const pass = req.headers['x-buglix-pass'];
+
+    // Vérifie l'utilisateur
+    const user = await verifyUserWithEmailAndPassword(email, pass);
+    if (!user) {
+      return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
+    }
+
+    // ...le reste de ton code...
 
     // Parse request body
     const contentType = req.headers['content-type'];
@@ -78,15 +100,17 @@ app.post('/api/mon-endpoint', verifyToken, async (req, res) => {
       return res.status(400).json({ error: 'Données vides ou non valides' });
     }
 
+    // Ensure data directory exists
     if (!fs.existsSync(DATA_DIR)) {
       fs.mkdirSync(DATA_DIR, { recursive: true });
     }
 
-    const dataFile = path.join(DATA_DIR, `${userData.token}.json`);
+    const dataFile = path.join(DATA_DIR, `${token}.json`);
     if (fs.existsSync(dataFile) && fs.statSync(dataFile).size > MAX_FILE_SIZE) {
       return res.status(400).json({ error: 'Fichier trop gros' });
     }
 
+    // Save data securely
     const payload = {
       timestamp: new Date().toISOString(),
       ip: req.ip,
@@ -97,10 +121,12 @@ app.post('/api/mon-endpoint', verifyToken, async (req, res) => {
     fs.writeFileSync(tempFile, JSON.stringify(payload, null, 2));
     fs.renameSync(tempFile, dataFile);
 
+    // Handle x-buglix-request header
     const buglixRequest = req.headers['x-buglix-request'];
     if (buglixRequest === 'chat') {
       const { message, context } = data;
 
+      // Prepare chat history
       const chatHistory = [
         {
           role: 'system',
@@ -110,11 +136,12 @@ Tu es une intelligence spécialisée intégrée dans un projet nommé **Buglix**
         { role: 'user', content: message },
       ];
 
+      // Call Groq API
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer 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`,
+          Authorization: `Bearer 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`, // Hardcoded API key for now
         },
         body: JSON.stringify({
           messages: chatHistory,
@@ -133,13 +160,14 @@ Tu es une intelligence spécialisée intégrée dans un projet nommé **Buglix**
       }
     }
 
-    res.json({ status: 'success', message: 'Données enregistrées', data_id: userData.token });
+    res.json({ status: 'success', message: 'Données enregistrées', data_id: token });
   } catch (error) {
-    console.error('Erreur lors de l\'enregistrement des données:', error);
+    console.error('Erreur:', error);
     res.status(500).json({ error: 'Erreur interne', details: error.message });
   }
 });
 
+// Démarrage du serveur
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
