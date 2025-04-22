@@ -50,16 +50,28 @@ app.post('/api/mon-endpoint', async (req, res) => {
     const token = authHeader.split(' ')[1];
 
     // Vérifiez si le token existe dans Firestore
-    const userRef = db.collection('users');
-    const querySnapshot = await userRef.where('token', '==', token).get();
+    let decodedToken;
+try {
+  decodedToken = await admin.auth().verifyIdToken(token);
+} catch (error) {
+  return res.status(401).json({ error: 'Token invalide ou expiré', details: error.message });
+}
 
-    if (querySnapshot.empty) {
-      return res.status(404).json({ error: 'Utilisateur non trouvé ou token invalide' });
-    }
+const uid = decodedToken.uid;
 
-    // Récupérer les données de l'utilisateur
-    const userDoc = querySnapshot.docs[0];
-    const userData = userDoc.data();
+// Tu peux maintenant récupérer des infos depuis Firestore si besoin
+let userData = null;
+try {
+  const userDoc = await db.collection('users').doc(uid).get();
+  if (userDoc.exists) {
+    userData = userDoc.data();
+  } else {
+    return res.status(404).json({ error: 'Utilisateur non trouvé dans Firestore' });
+  }
+} catch (error) {
+  return res.status(500).json({ error: 'Erreur lors de la récupération des données utilisateur', details: error.message });
+}
+
 
     // Logique supplémentaire si nécessaire
     console.log('Utilisateur trouvé :', userData);
