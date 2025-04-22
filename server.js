@@ -163,7 +163,6 @@ Tu es une intelligence spécialisée intégrée dans un projet nommé **Buglix**
       }
     }
 
-    res.json({ status: 'success', message: 'Données enregistrées', data_id: token });
   } catch (error) {
     console.error('Erreur:', error);
     res.status(500).json({ error: 'Erreur interne', details: error.message });
