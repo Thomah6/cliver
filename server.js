@@ -114,9 +114,7 @@ app.post('/api/mon-endpoint', async (req, res) => {
       data,
     };
 
-    const tempFile = path.join(DATA_DIR, `tmp_${Date.now()}.json`);
-    fs.writeFileSync(tempFile, JSON.stringify(payload, null, 2));
-    fs.renameSync(tempFile, dataFile);
+   
 
     // Handle x-buglix-request header
     const buglixRequest = req.headers['x-buglix-request'];
@@ -154,6 +152,11 @@ Tu es une intelligence spécialisée intégrée dans un projet nommé **Buglix**
         return res.json({ success: true, content: assistantMessage });
       } else {
         return res.status(500).json({ error: 'Erreur API', details: responseData });
+      }
+    }else if(buglixRequest === 'init'){
+     
+      if (!user) {
+        return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
       }
     }
 
