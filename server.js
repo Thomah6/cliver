@@ -96,29 +96,30 @@ app.post('/api/mon-endpoint', async (req, res) => {
       return res.status(415).json({ error: 'Format non supporté' });
     }
 
-    if (!data || Object.keys(data).length === 0) {
-      return res.status(400).json({ error: 'Données vides ou non valides' });
-    }
-
-    // Ensure data directory exists
-    if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
-    }
-
     
-
-    // Save data securely
-    const payload = {
-      timestamp: new Date().toISOString(),
-      ip: req.ip,
-      data,
-    };
-
    
 
     // Handle x-buglix-request header
     const buglixRequest = req.headers['x-buglix-request'];
     if (buglixRequest === 'chat') {
+      if (!data || Object.keys(data).length === 0) {
+        return res.status(400).json({ error: 'Données vides ou non valides' });
+      }
+  
+      // Ensure data directory exists
+      if (!fs.existsSync(DATA_DIR)) {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+      }
+  
+      
+  
+      // Save data securely
+      const payload = {
+        timestamp: new Date().toISOString(),
+        ip: req.ip,
+        data,
+      };
+  
       const { message, context } = data;
 
       // Prepare chat history
@@ -157,6 +158,8 @@ Tu es une intelligence spécialisée intégrée dans un projet nommé **Buglix**
      
       if (!user) {
         return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
+      }else{
+        return res.status(200).json({ error: 'Correct' });
       }
     }
 
