@@ -159,7 +159,7 @@ Tu es une intelligence spécialisée intégrée dans un projet nommé **Buglix**
       if (!user) {
         return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
       }else{
-        return res.status(200).json({ error: 'Correct' });
+        return res.status(200).json({ success: 'Correct' });
       }
     }
 
