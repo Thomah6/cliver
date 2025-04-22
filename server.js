@@ -5,14 +5,35 @@ import { dirname } from 'path';
 import fs from 'fs';
 import fetch from 'node-fetch';
 import admin from 'firebase-admin';
+import { getFirestore } from 'firebase-admin/firestore';
+
 const serviceAccount = JSON.parse(fs.readFileSync('./firebase-admin-key.json', 'utf8'));
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
-const db = admin.firestore();
 
+// Middleware de vérification du token
+export async function verifyToken(req, res, next) {
+  const authHeader = req.headers.authorization;
 
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Token manquant ou invalide" });
+  }
+
+  const token = authHeader.split(" ")[1];
+  const db = getFirestore();
+
+  const usersRef = db.collection("users");
+  const snapshot = await usersRef.where("token", "==", token).limit(1).get();
+
+  if (snapshot.empty) {
+    return res.status(401).json({ error: "Token invalide" });
+  }
+
+  req.user = snapshot.docs[0].data();
+  next();
+}
 
 const app = express();
 const DATA_DIR = path.resolve('./data');
@@ -21,60 +42,26 @@ const MAX_FILE_SIZE = 1024 * 1024; // 1MB max
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Pour parser les body en JSON (important pour les POST)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// Helper function to clean AI response
+
 const cleanAIResponse = (response) => {
-  return response.replace(/<\/?[^>]+(>|$)/g, '').trim(); // Remove HTML tags and trim
+  return response.replace(/<\/?[^>]+(>|$)/g, '').trim();
 };
 
 const port = process.env.PORT || 3000;
 
-// Serve les fichiers statiques (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Route GET
 app.get('/api/mon-endpoint', (req, res) => {
   res.json({ message: 'Hello from my API!' });
 });
 
-// Route POST
-app.post('/api/mon-endpoint', async (req, res) => {
+// Utilise le middleware sur ta route POST
+app.post('/api/mon-endpoint', verifyToken, async (req, res) => {
   try {
-    // Authorization header check
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'token manquant ou mal formé' });
-    }
-    const token = authHeader.split(' ')[1];
-
-    // Vérifiez si le token existe dans Firestore
-    let decodedToken;
-try {
-  decodedToken = await admin.auth().verifyIdToken(token);
-} catch (error) {
-  return res.status(401).json({ error: 'Token invalide ou expiré', details: error.message });
-}
-
-const uid = decodedToken.uid;
-
-// Tu peux maintenant récupérer des infos depuis Firestore si besoin
-let userData = null;
-try {
-  const userDoc = await db.collection('users').doc(uid).get();
-  if (userDoc.exists) {
-    userData = userDoc.data();
-  } else {
-    return res.status(404).json({ error: 'Utilisateur non trouvé dans Firestore' });
-  }
-} catch (error) {
-  return res.status(500).json({ error: 'Erreur lors de la récupération des données utilisateur', details: error.message });
-}
-
-
-    // Logique supplémentaire si nécessaire
-    console.log('Utilisateur trouvé :', userData);
+    // Ici, req.user contient les infos utilisateur
+    const userData = req.user;
 
     // Parse request body
     const contentType = req.headers['content-type'];
@@ -91,17 +78,15 @@ try {
       return res.status(400).json({ error: 'Données vides ou non valides' });
     }
 
-    // Ensure data directory exists
     if (!fs.existsSync(DATA_DIR)) {
       fs.mkdirSync(DATA_DIR, { recursive: true });
     }
 
-    const dataFile = path.join(DATA_DIR, `${token}.json`);
+    const dataFile = path.join(DATA_DIR, `${userData.token}.json`);
     if (fs.existsSync(dataFile) && fs.statSync(dataFile).size > MAX_FILE_SIZE) {
       return res.status(400).json({ error: 'Fichier trop gros' });
     }
 
-    // Save data securely
     const payload = {
       timestamp: new Date().toISOString(),
       ip: req.ip,
@@ -112,12 +97,10 @@ try {
     fs.writeFileSync(tempFile, JSON.stringify(payload, null, 2));
     fs.renameSync(tempFile, dataFile);
 
-    // Handle x-buglix-request header
     const buglixRequest = req.headers['x-buglix-request'];
     if (buglixRequest === 'chat') {
       const { message, context } = data;
 
-      // Prepare chat history
       const chatHistory = [
         {
           role: 'system',
@@ -127,12 +110,11 @@ Tu es une intelligence spécialisée intégrée dans un projet nommé **Buglix**
         { role: 'user', content: message },
       ];
 
-      // Call Groq API
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer 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`, // Hardcoded API key for now
+          Authorization: `Bearer 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`,
         },
         body: JSON.stringify({
           messages: chatHistory,
@@ -151,14 +133,13 @@ Tu es une intelligence spécialisée intégrée dans un projet nommé **Buglix**
       }
     }
 
-    res.json({ status: 'success', message: 'Données enregistrées', data_id: token });
+    res.json({ status: 'success', message: 'Données enregistrées', data_id: userData.token });
   } catch (error) {
-    console.error('Erreur lors de la vérification du token ou de l\'enregistrement des données:', error);
+    console.error('Erreur lors de l\'enregistrement des données:', error);
     res.status(500).json({ error: 'Erreur interne', details: error.message });
   }
 });
 
-// Démarrage du serveur
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
