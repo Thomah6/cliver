@@ -25,7 +25,7 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 // Initialiser Firebase Admin SDK
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: (admin.credential || admin.default.credential).cert(serviceAccount),
 });
 
 const db = admin.firestore(); // Utiliser Firestore via Admin SDK
