@@ -8,7 +8,7 @@ import { getFirestore, collection, query, where, getDocs } from 'firebase/firest
 import fs from 'fs';
 import fetch from 'node-fetch'; // Ensure this is installed for API calls
 import * as admin from 'firebase-admin';
-import serviceAccount from './firebase-admin-key.json' assert { type: 'json' };
+const serviceAccount = JSON.parse(fs.readFileSync('./firebase-admin-key.json', 'utf8'));
 
 // Firebase configuration (hardcoded for now)
 const firebaseConfig = {
